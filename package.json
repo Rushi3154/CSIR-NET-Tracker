@@ -1,0 +1,37 @@
+{
+  "name": "csir-tracker",
+  "version": "1.0.0",
+  "description": "CSIR-NET Chemistry Topic Tracker",
+  "main": "main.js",
+  "scripts": {
+    "dist": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^44.6.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.csirtracker.desktop",
+    "productName": "CSIR Tracker",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "artifactName": "CSIR-Tracker-Setup-${version}.${ext}"
+    }
+  }
+}

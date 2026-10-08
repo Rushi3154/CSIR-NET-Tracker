@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSIR-NET Chemistry Topic Tracker</title>
+<script>
+  let savedTheme = null;
+  try {
+    savedTheme = localStorage.getItem("csir-tracker-theme");
+  } catch (error) {
+    console.warn("Could not read the saved appearance preference:", error);
+  }
+  document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light"
+    ? savedTheme
+    : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #eae7df; --card: rgb(247 245 239 / 0.84); --surface: #f7f5ef;
+  --surface-soft: rgb(239 236 228 / 0.88); --text: #34332f; --muted: #77746d;
+  --border: rgb(72 67 55 / 0.11); --accent: #4c6f9d; --accent-hover: #3f5e86;
+  --accent2: #52856c; --doing: #a77d3c; --danger: #b85f56;
+  --radius-sm: 12px; --radius-md: 18px; --radius-lg: 24px;
+  --shadow-sm: 0 2px 10px rgb(65 57 42 / 0.045);
+  --shadow: 0 12px 34px rgb(65 57 42 / 0.075);
+  --shadow-lg: 0 24px 64px rgb(65 57 42 / 0.15);
+  --glass-border: rgb(255 253 247 / 0.72);
+  --focus-ring: 0 0 0 4px rgb(76 111 157 / 0.15);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101114; --card: rgb(31 33 39 / 0.76); --surface: #24262d;
+  --surface-soft: rgb(39 41 48 / 0.82); --text: #f5f5f7; --muted: #a1a3ad;
+  --border: rgb(255 255 255 / 0.09); --accent: #6ea5ff; --accent-hover: #8bb7ff;
+  --accent2: #55c98b; --doing: #f2b84b; --danger: #ff716b;
+  --shadow-sm: 0 2px 12px rgb(0 0 0 / 0.15);
+  --shadow: 0 14px 38px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 24px 68px rgb(0 0 0 / 0.38);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --focus-ring: 0 0 0 4px rgb(110 165 255 / 0.2);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; line-height: 1.5; }
+.container { max-width: 1200px; margin: auto; padding: 32px 20px 60px; }
+.top { display: flex; justify-content: space-between; gap: 20px; align-items: end; flex-wrap: wrap; margin-bottom: 24px; }
+.greeting { background: #eef2ff; color: #3730a3; padding: 14px 18px; border-radius: var(--radius-md); margin-bottom: 20px; font-size: 18px; font-weight: 600; }
+h1 { margin: 0; font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
+.sub { color: var(--muted); margin-top: 8px; font-size: 15px; }
+.motivation-banner { background: #1e293b; color: #f8fafc; padding: 20px 24px; border-radius: var(--radius-md); margin-bottom: 24px; text-align: center; box-shadow: var(--shadow); }
+.motivation-quote { font-size: 16px; font-style: italic; margin-bottom: 12px; color: #cbd5e1; line-height: 1.6; }
+.motivation-quote::before { content: '“'; font-size: 20px; color: #4f46e5; }
+.motivation-quote::after { content: '”'; font-size: 20px; color: #4f46e5; }
+.motivation-data { font-size: 15px; font-weight: 600; color: #34d399; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 999px; display: inline-block; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+button, .select, input { font: inherit; transition: all 0.2s ease; }
+.btn { border: 1px solid var(--border); background: var(--card); color: var(--text); padding: 10px 16px; border-radius: var(--radius-sm); font-weight: 500; cursor: pointer; box-shadow: var(--shadow-sm); }
+.btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn.danger { color: var(--danger); }
+.btn.danger:hover { background: #fef2f2; border-color: var(--danger); }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 0 0 24px; }
+.stat { background: var(--card); border: none; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); transition: transform 0.2s ease; }
+.stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.stat small { display: block; color: var(--muted); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat strong { display: block; font-size: 28px; font-weight: 700; margin-top: 8px; color: #111827; }
+
+.progress-card { background: var(--card); border: none; border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow); }
+.progress-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 16px; }
+.progress-head strong { font-size: 20px; color: var(--accent); }
+.bar { height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 14px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+.bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #818cf8); border-radius: 999px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.search, .select { border: 1px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 12px 16px; outline: none; box-shadow: var(--shadow-sm); }
+.search { flex: 1; min-width: 250px; }
+.search:focus, .select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+.topic-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: var(--card); padding: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 24px; }
+.topic-form input, .topic-form select { border: 1px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 10px 12px; min-width: 140px; }
+.topic-form input[name="name"] { flex: 1; min-width: 220px; }
+.topic-actions { display: flex; gap: 8px; margin-top: 12px; }
+.topic-actions .btn { padding: 7px 10px; font-size: 13px; }
+dialog { width: min(440px, calc(100% - 32px)); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; color: var(--text); box-shadow: var(--shadow-lg); }
+dialog::backdrop { background: rgb(15 23 42 / 0.45); }
+.edit-form { display: grid; gap: 14px; }
+.edit-form h2 { margin: 0; font-size: 20px; }
+.edit-form label { display: grid; gap: 6px; font-weight: 500; }
+.edit-form input, .edit-form select { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font: inherit; }
+.edit-form textarea { width: 100%; min-height: 220px; resize: vertical; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text); background: var(--surface-soft); font: inherit; line-height: 1.5; }
+.edit-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+
+.collapsible { border: none; border-radius: var(--radius-md); background: transparent; margin: 24px 0; }
+.section-title { padding: 16px 20px; margin: 0 !important; cursor: pointer; user-select: none; background: var(--card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s ease; }
+.section-title:hover { background: #f8fafc; }
+.section-title h2 { font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+.badge { background: #e0e7ff; border-radius: 999px; padding: 4px 10px; font-size: 13px; color: #3730a3; font-weight: 500; }
+.section-title .collapse-arrow { transition: transform 0.3s ease; font-size: 14px; color: var(--muted); }
+.collapsible.closed .collapse-arrow { transform: rotate(-90deg); }
+.collapsible.closed .section-body { display: none; }
+.section-body { padding-top: 12px; }
+
+.topic { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; margin: 12px 0; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s; }
+.topic:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+.topic.completed { border-left: 6px solid var(--accent2); }
+.topic.doing { border-left: 6px solid var(--doing); }
+.topic.skip { border-left: 6px solid var(--danger); opacity: 0.85; }
+
+.exam { margin: 0 0 24px; padding: 16px 20px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); color: #1e3a8a; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.exam-date { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.deadline-input { border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 6px 8px; color: inherit; font: inherit; }
+
+.topic-main { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+.name { font-weight: 600; font-size: 16px; color: #111827; }
+.marks { font-weight: 700; white-space: nowrap; background: #f3f4f6; padding: 8px 12px; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
+
+.status-group { display: flex; background: #f9fafb; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 4px; }
+.status-btn { border: none; background: transparent; padding: 6px 12px; font-size: 13px; font-weight: 500; color: var(--muted); border-radius: 6px; cursor: pointer; }
+.status-btn:hover:not(.active) { background: #e5e7eb; color: var(--text); }
+.status-btn.active[data-value="remaining"] { background: white; color: var(--text); box-shadow: var(--shadow-sm); }
+.status-btn.active[data-value="doing"] { background: #fef3c7; color: #b45309; box-shadow: var(--shadow-sm); }
+.status-btn.active[data-value="completed"] { background: #d1fae5; color: #047857; box-shadow: var(--shadow-sm); }
+.status-btn.active[data-value="skip"] { background: #fee2e2; color: #b91c1c; box-shadow: var(--shadow-sm); }
+
+.checks { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: 14px; }
+.checks label { display: flex; align-items: center; gap: 8px; cursor: pointer; transition: color 0.2s; }
+.checks label:hover { color: var(--text); }
+.checks input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+.meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
+.done-note { color: var(--accent2); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.empty { text-align: center; color: var(--muted); padding: 40px; font-size: 15px; background: var(--card); border-radius: var(--radius-md); border: 1px dashed var(--border); }
+
+html { min-height: 100%; scroll-behavior: smooth; }
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgb(196 177 139 / 0.12), transparent 34rem),
+    radial-gradient(ellipse at 88% 12%, rgb(157 168 163 / 0.1), transparent 32rem),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  letter-spacing: -0.01em;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.container { max-width: 1160px; padding: 42px 24px 100px; }
+.top { align-items: center; margin-bottom: 28px; }
+h1 { color: var(--text); font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.045em; }
+.sub { color: var(--muted); }
+.actions { gap: 8px; }
+button, input, select { font-family: inherit; }
+.btn {
+  border-color: var(--border); background: var(--card); color: var(--text);
+  border-radius: 999px; padding: 10px 15px; box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+.btn:hover { background: var(--surface); border-color: var(--border); color: var(--accent); transform: translateY(-1px); }
+.btn.danger { color: var(--danger); }
+.btn.danger:hover { background: rgb(223 75 69 / 0.1); border-color: rgb(223 75 69 / 0.35); }
+.greeting, .motivation-banner, .exam, .stat, .progress-card, .topic-form, .section-title, .topic, .empty {
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px) saturate(155%);
+  -webkit-backdrop-filter: blur(24px) saturate(155%);
+}
+.greeting {
+  background: var(--card); color: var(--accent); border-radius: var(--radius-md);
+  padding: 15px 20px; box-shadow: var(--shadow-sm); font-size: 16px;
+}
+.motivation-banner {
+  background: linear-gradient(135deg, rgb(42 82 147 / 0.92), rgb(37 53 82 / 0.88));
+  border-color: rgb(255 255 255 / 0.14); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow); padding: 24px;
+}
+:root[data-theme="dark"] .motivation-banner {
+  background: linear-gradient(135deg, rgb(34 51 77 / 0.92), rgb(30 33 42 / 0.92));
+}
+.motivation-quote { color: #edf3ff; }
+.motivation-quote::before, .motivation-quote::after { color: #a9c8ff; }
+.motivation-data { background: rgb(85 201 139 / 0.15); color: #8ce0b3; }
+:root:not([data-theme="dark"]) .motivation-banner {
+  background: linear-gradient(135deg, rgb(91 112 133 / 0.96), rgb(75 91 105 / 0.94));
+}
+.stat, .progress-card, .topic-form, .section-title, .topic, .empty {
+  background: var(--card); border-color: var(--border); box-shadow: var(--shadow-sm);
+}
+.stat { padding: 20px; }
+.stat:hover { box-shadow: var(--shadow); }
+.stat small { color: var(--muted); }
+.stat strong, .name { color: var(--text); }
+.stat strong { letter-spacing: -0.04em; }
+.progress-card { border-radius: var(--radius-lg); }
+.progress-head strong { color: var(--accent); }
+.bar { background: var(--surface-soft); box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.08); }
+.controls { gap: 10px; }
+.search, .select, .topic-form input, .topic-form select, .edit-form input, .edit-form select {
+  color: var(--text); background: var(--surface-soft); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); box-shadow: none;
+}
+.search::placeholder, .topic-form input::placeholder { color: var(--muted); }
+.search:focus, .select:focus, .topic-form input:focus, .topic-form select:focus,
+.edit-form input:focus, .edit-form select:focus { border-color: var(--accent); box-shadow: var(--focus-ring); outline: none; }
+.edit-form textarea:focus { border-color: var(--accent); box-shadow: var(--focus-ring); outline: none; }
+.topic-form { border-radius: var(--radius-md); padding: 14px; }
+dialog { background: var(--surface); color: var(--text); }
+.edit-form h2 { letter-spacing: -0.03em; }
+.section-title { border-radius: var(--radius-md); }
+.section-title:hover { background: var(--surface-soft); }
+.section-title h2 { color: var(--text); letter-spacing: -0.02em; }
+.badge { background: rgb(76 111 157 / 0.11); color: var(--accent); }
+.topic { border-radius: var(--radius-md); }
+.topic.completed { border-left-color: var(--accent2); }
+.topic.doing { border-left-color: var(--doing); }
+.topic.skip { border-left-color: var(--danger); }
+.exam {
+  background: rgb(111 139 166 / 0.1); border-color: rgb(111 139 166 / 0.18);
+  color: var(--accent); border-radius: var(--radius-md);
+}
+.deadline-input { background: var(--surface); border-color: var(--border); color: var(--text); }
+#countdownTimer { color: var(--danger) !important; background: rgb(184 95 86 / 0.1) !important; }
+.marks { background: var(--surface-soft); color: var(--muted); }
+.status-group { background: var(--surface-soft); border-color: var(--border); border-radius: 999px; }
+.status-btn { border-radius: 999px; }
+.status-btn:hover:not(.active) { background: rgb(127 135 151 / 0.15); color: var(--text); }
+.status-btn.active[data-value="remaining"] { background: var(--surface); color: var(--text); }
+.status-btn.active[data-value="doing"] { background: rgb(217 145 22 / 0.16); color: var(--doing); }
+.status-btn.active[data-value="completed"] { background: rgb(48 164 108 / 0.16); color: var(--accent2); }
+.status-btn.active[data-value="skip"] { background: rgb(223 75 69 / 0.14); color: var(--danger); }
+.celebration-burst { position: fixed; z-index: 30; pointer-events: none; }
+.celebration-burst span {
+  position: absolute; width: 8px; height: 12px; border-radius: 2px;
+  animation: confetti-burst var(--duration) cubic-bezier(0.15, 0.75, 0.35, 1) var(--delay) both;
+}
+@keyframes confetti-burst {
+  to {
+    opacity: 0;
+    transform: translate3d(var(--x), var(--y), 0) rotate(var(--rotation)) scale(0.7);
+  }
+}
+.checks { color: var(--muted); }
+input[type="checkbox"] { accent-color: var(--accent); }
+:focus-visible { outline: 3px solid rgb(76 111 157 / 0.55); outline-offset: 3px; }
+.theme-switcher {
+  position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 10; display: flex; gap: 3px; padding: 5px;
+  border: 1px solid var(--glass-border); border-radius: 999px;
+  background: var(--card); box-shadow: var(--shadow);
+  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+.theme-switcher button {
+  border: 0; border-radius: 999px; padding: 9px 13px; background: transparent;
+  color: var(--muted); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.theme-switcher button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+.theme-switcher button:hover { color: var(--accent); }
+@media (max-width: 720px) {
+  .container { padding: 28px 16px 100px; }
+  .top { align-items: flex-start; }
+  .actions { width: 100%; }
+  .actions .btn { flex: 1 1 auto; }
+  .topic-main { grid-template-columns: 1fr; gap: 14px; }
+  .meta { justify-content: flex-start; }
+  .status-group { flex-wrap: wrap; }
+  .section-title { align-items: flex-start; gap: 10px; }
+  .section-title h2 { flex-wrap: wrap; font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}
+
+.window-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 14px;
+  background: var(--bg);
+  color: var(--muted);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.window-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.window-title-icon { font-size: 15px; }
+.window-controls {
+  height: 100%;
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+.window-controls button {
+  width: 46px;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.window-controls button:hover { background: rgb(127 135 151 / 0.16); }
+.window-controls button.close:hover { background: #c42b1c; color: #fff; }
+.window-controls svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; }
+@media (max-width: 520px) {
+  .window-title { font-size: 12px; }
+  .window-controls button { width: 40px; }
+}
+
+/* Keep structure through tone and depth rather than visible outlines. */
+:root {
+  --border: transparent;
+  --glass-border: transparent;
+}
+:root[data-theme="dark"] {
+  --border: transparent;
+  --glass-border: transparent;
+}
+.greeting, .motivation-banner, .exam, .stat, .progress-card, .topic-form,
+.section-title, .topic, .empty {
+  border: 0;
+}
+.stat, .progress-card, .topic-form, .section-title, .topic, .empty {
+  box-shadow: 0 8px 28px rgb(65 57 42 / 0.055);
+}
+:root[data-theme="dark"] .stat,
+:root[data-theme="dark"] .progress-card,
+:root[data-theme="dark"] .topic-form,
+:root[data-theme="dark"] .section-title,
+:root[data-theme="dark"] .topic,
+:root[data-theme="dark"] .empty {
+  box-shadow: 0 10px 32px rgb(0 0 0 / 0.16);
+}
+.btn {
+  border: 0;
+  box-shadow: 0 4px 14px rgb(65 57 42 / 0.07);
+}
+.btn:hover { box-shadow: 0 8px 22px rgb(65 57 42 / 0.11); }
+.search, .select, .topic-form input, .topic-form select,
+.edit-form input, .edit-form select {
+  border: 0;
+  box-shadow: inset 0 1px 2px rgb(65 57 42 / 0.035);
+}
+.search:focus, .select:focus, .topic-form input:focus, .topic-form select:focus,
+.edit-form input:focus, .edit-form select:focus {
+  border: 0;
+  box-shadow: var(--focus-ring);
+}
+.status-group { border: 0; }
+.exam { background: rgb(111 139 166 / 0.075); }
+.theme-switcher {
+  border: 0;
+  padding: 6px;
+  box-shadow: 0 10px 32px rgb(65 57 42 / 0.14);
+}
+dialog { border: 0; }
+</style>
+</head>
+<body>
+<header class="window-bar" aria-label="Application title bar" ondblclick="window.api?.toggleMaximizeWindow()">
+  <div class="window-title"><span class="window-title-icon" aria-hidden="true">🧪</span><span>CSIR-NET Chemistry Topic Tracker</span></div>
+  <nav class="window-controls" aria-label="Window controls">
+    <button type="button" aria-label="Minimize window" title="Minimize" onclick="window.api?.minimizeWindow()">
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8"/></svg>
+    </button>
+    <button type="button" aria-label="Maximize or restore window" title="Maximize or restore" onclick="window.api?.toggleMaximizeWindow()">
+      <svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2.5" width="7" height="7"/></svg>
+    </button>
+    <button class="close" type="button" aria-label="Close window" title="Close" onclick="window.api?.closeWindow()">
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 3 6 6M9 3 3 9"/></svg>
+    </button>
+  </nav>
+</header>
+<div class="container">
+  <div class="top">
+    <div>
+      <h1>🧪 CSIR-NET Chemistry Tracker</h1>
+      <div class="sub">Native Application. Your progress saves automatically to your chosen CSV file.</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="exportBtn">Export CSV</button>
+      <button class="btn" id="importBtn">Import CSV</button>
+      <button class="btn" id="changeSaveLocationBtn">Change Save Location</button>
+      <button class="btn danger" id="resetBtn">Reset All Data</button>
+    </div>
+  </div>
+
+  <div class="greeting" id="greeting" aria-live="polite"></div>
+
+<div class="motivation-banner">
+    <div class="motivation-quote" id="dailyQuote"></div>
+    <div class="motivation-data" id="dataMotivation"></div>
+  </div>
+
+<div class="exam" style="justify-content: space-between;">
+  <label class="exam-date" for="deadlineInput">📅 <strong>CSIR-NET Deadline:</strong>
+    <input id="deadlineInput" class="deadline-input" type="date" value="2026-12-19" required>
+  </label>
+  <div id="countdownTimer" style="font-weight: 700; color: #b91c1c; background: #fee2e2; padding: 4px 12px; border-radius: 999px;">⏳ Calculating...</div>
+</div>
+
+  <div class="stats">
+    <div class="stat"><small>Total Marks</small><strong id="totalMarks">321</strong></div>
+    <div class="stat"><small>Covered Marks</small><strong id="covered">0</strong></div>
+    <div class="stat"><small>Remaining Marks</small><strong id="remaining">321</strong></div>
+    <div class="stat"><small>Completed Topics</small><strong id="completed">0</strong></div>
+    <div class="stat"><small>Doing Now</small><strong id="doing">0</strong></div>
+    <div class="stat"><small>Excluded Topics</small><strong id="excluded">0</strong></div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-head"><span>Overall Syllabus Coverage</span><strong id="pct">0%</strong></div>
+    <div class="bar"><span id="bar" style="width:0%"></span></div>
+    <div class="sub" style="font-size:13px;margin-top:12px">Coverage uses Avg. Marks. Excluded Marks are marked "Don't want to do" and are not counted as covered. <br/> <strong id="excludedMarks">0</strong> marks currently excluded.</div>
+  </div>
+
+  <div class="controls">
+    <input id="search" class="search" type="search" placeholder="🔎 Search topic...">
+    <select id="statusFilter" class="select">
+      <option value="all">All Status</option>
+      <option value="remaining">Remaining</option>
+      <option value="doing">Doing</option>
+      <option value="completed">Completed</option>
+      <option value="skip">Don't want to do</option>
+    </select>
+    <select id="categoryFilter" class="select">
+      <option value="all">All Categories</option>
+      <option value="bumper">Bumper</option>
+      <option value="major">Major</option>
+      <option value="minor">Minor</option>
+    </select>
+  </div>
+
+  <form class="topic-form" id="topicForm">
+    <input name="name" type="text" placeholder="New topic name" aria-label="New topic name" maxlength="160" required>
+    <input name="marks" type="number" placeholder="Marks" aria-label="Topic marks" min="0.1" step="any" required>
+    <select name="category" aria-label="Topic category">
+      <option value="bumper">Bumper</option>
+      <option value="major">Major</option>
+      <option value="minor">Minor</option>
+    </select>
+    <button class="btn" type="submit">Add Topic</button>
+  </form>
+
+  <dialog id="editTopicDialog">
+    <form class="edit-form" id="editTopicForm">
+      <h2>Edit topic</h2>
+      <label>Topic name<input name="name" type="text" maxlength="160" required></label>
+      <label>Marks<input name="marks" type="number" min="0.1" step="any" required></label>
+      <label>Category
+        <select name="category">
+          <option value="bumper">Bumper</option>
+          <option value="major">Major</option>
+          <option value="minor">Minor</option>
+        </select>
+      </label>
+      <div class="edit-form-actions">
+        <button class="btn" id="cancelEditTopic" type="button">Cancel</button>
+        <button class="btn" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="topicNoteDialog">
+    <form class="edit-form" id="topicNoteForm">
+      <h2 id="topicNoteTitle">Topic note</h2>
+      <label for="topicNoteText">Your note</label>
+      <textarea id="topicNoteText" name="note" maxlength="10000" placeholder="Write a note for this topic..."></textarea>
+      <div class="edit-form-actions">
+        <button class="btn" id="cancelTopicNote" type="button">Cancel</button>
+        <button class="btn" type="submit">Save note</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="usernameDialog">
+    <form class="edit-form" id="usernameForm">
+      <h2>Welcome to your tracker!</h2>
+      <label>What should I call you?
+        <input name="username" type="text" maxlength="50" autocomplete="name" required autofocus>
+      </label>
+      <div class="edit-form-actions">
+        <button class="btn" type="submit">Save my name</button>
+      </div>
+    </form>
+  </dialog>
+
+  <main id="topics"></main>
+</div>
+
+<div class="theme-switcher" role="group" aria-label="Appearance">
+  <button type="button" data-theme-choice="light" aria-pressed="false">☀ Light</button>
+  <button type="button" data-theme-choice="dark" aria-pressed="false">☾ Dark</button>
+</div>
+
+<script>
+const themeButtons = document.querySelectorAll("[data-theme-choice]");
+const setTheme = theme => {
+  document.documentElement.dataset.theme = theme;
+  themeButtons.forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.themeChoice === theme));
+  });
+  try {
+    localStorage.setItem("csir-tracker-theme", theme);
+  } catch (error) {
+    console.warn("Could not save the appearance preference:", error);
+  }
+};
+themeButtons.forEach(button => {
+  button.addEventListener("click", () => setTheme(button.dataset.themeChoice));
+});
+setTheme(document.documentElement.dataset.theme);
+
+let TOPICS = [
+["bumper","Chemistry of Transition metal & Inner Transition Elements",32],
+["bumper","Reagents + Protecting Deprotecting Group + Coupling Reaction",30],
+["bumper","Atomic Structure & Quantum Chemistry",28],
+["bumper","Organometallics",21.6],
+["bumper","Reaction Mechanism",20.8],
+["bumper","Chemical Kinetics & Photochemistry",14],
+["bumper","Pericyclic reaction",12.4],
+["bumper","Main Group Elements",11.6],
+["bumper","Characterisation of Inorganic Spectra",11.2],
+["major","Chemical Thermodynamics",10.8],
+["major","Group Theory",10.8],
+["major","Organic Spectroscopy",10.8],
+["major","Reaction Intermediate",9.2],
+["major","Electrochemistry & Conductance",8.4],
+["major","Bioinorganic Chemistry",8],
+["major","Enolate & Name Reactions",8],
+["major","Chemical Bonding",7.2],
+["major","Solid State",6.8],
+["major","Stereochemistry",6.8],
+["major","Physical Spectroscopy",6.4],
+["minor","Polymer Chemistry",5.2],
+["minor","Heterocyclic Compounds",5.2],
+["minor","Statistical Thermodynamics",4.8],
+["minor","Colloids and Surface Phenomena",4.8],
+["minor","Chemistry of Natural Products",4.8],
+["minor","Analytical Chemistry + Inorganic Qualitative Analysis",4],
+["minor","Nuclear Chemistry",3.8],
+["minor","Phase Equilibrium",3.6],
+["minor","IUPAC Nomenclature of organic Compounds / GOC",2.4],
+["minor","Data Analysis",1.6],
+["minor","Concept of Acid & Bases",1.6],
+["minor","Mole Concept & Liquid Solution",0.8],
+["minor","Gaseous State",0.8],
+["minor","Periodic Properties",0.8],
+["minor","Photochemistry",0.8],
+["minor","Chemical & Ionic Equilibrium",0.4]
+].map((x,i)=>({id:"t"+i,cat:x[0],name:x[1],marks:x[2]}));
+
+let state={};
+let username="";
+let deadline="2026-12-19";
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const get=t=>state[t.id]||{status:"remaining",pyq:false,revision:false,test:false};
+const validTopicId=id=>typeof id==="string"&&/^[a-zA-Z0-9_-]+$/.test(id)&&!Object.hasOwn(Object.prototype,id);
+const validDeadline=value=>{
+  if(typeof value!=="string"||! /^\d{4}-\d{2}-\d{2}$/.test(value))return false;
+  const [year,month,day]=value.split("-").map(Number);
+  const parsed=new Date(year,month-1,day);
+  return parsed.getFullYear()===year&&parsed.getMonth()===month-1&&parsed.getDate()===day;
+};
+const fmt=n=>Number.isInteger(n)?String(n):n.toFixed(1);
+const updateGreeting=()=>{
+  const hour=new Date().getHours();
+  const greeting=hour>=5&&hour<12?"Good morning":hour>=12&&hour<17?"Good afternoon":hour>=17&&hour<21?"Good evening":"Hi";
+  document.getElementById("greeting").textContent=username
+    ? `${greeting}, ${username}! Ready to make progress today?`
+    : `${greeting}! Ready to make progress today?`;
+};
+const sectionOpen={bumper:false,major:false,minor:false};
+const QUOTES = [
+  // Marcus Aurelius & Stoic Philosophy
+  { text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius, Meditations" },
+  { text: "The impediment to action advances action. What stands in the way becomes the way.", author: "Marcus Aurelius, Meditations" },
+  { text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius, Meditations" },
+  { text: "When you arise in the morning think of what a privilege it is to be alive, to think, to enjoy, to love.", author: "Marcus Aurelius, Meditations" },
+  { text: "The soul becomes dyed with the color of its thoughts.", author: "Marcus Aurelius, Meditations" },
+  { text: "Accept the things to which fate binds you, and love the people with whom fate brings you together.", author: "Marcus Aurelius, Meditations" },
+  { text: "It is not that we have a short time to live, but that we waste a lot of it.", author: "Seneca, On the Brevity of Life" },
+  { text: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", author: "Marcus Aurelius, Meditations" },
+  { text: "The best revenge is not to be like your enemy.", author: "Marcus Aurelius, Meditations" },
+  { text: "Begin at once to live, and count each separate day as a separate life.", author: "Seneca, Letters from a Stoic" },
+
+  // Seneca & Epictetus
+  { text: "Difficulties strengthen the mind, as labor does the body.", author: "Seneca, On Providence" },
+  { text: "We suffer more often in imagination than in reality.", author: "Seneca, Letters from a Stoic" },
+  { text: "Luck is what happens when preparation meets opportunity.", author: "Seneca (Attributed)" },
+  { text: "He who is brave is free.", author: "Seneca, Epistulae Morales ad Lucilium" },
+  { text: "First say to yourself what you would be; and then do what you have to do.", author: "Epictetus, Discourses" },
+  { text: "No man is more unhappy than he who never faces adversity. For he is not permitted to prove himself.", author: "Seneca, On Providence" },
+  { text: "To win over oneself is the first and greatest of all victories.", author: "Plato, The Republic" },
+  { text: "It's not what happens to you, but how you react to it that matters.", author: "Epictetus, Enchiridion" },
+  { text: "He is a wise man who does not grieve for the things which he has not, but rejoices for those which he has.", author: "Epictetus, Discourses" },
+  { text: "Associate with people who are likely to improve you.", author: "Seneca, Letters from a Stoic" },
+
+  // Friedrich Nietzsche & Existentialists
+  { text: "He who has a why to live for can bear almost any how.", author: "Friedrich Nietzsche, Twilight of the Idols" },
+  { text: "To live is to suffer, to survive is to find some meaning in the suffering.", author: "Friedrich Nietzsche (Derived from Man's Search for Meaning)" },
+  { text: "That which does not kill us makes us stronger.", author: "Friedrich Nietzsche, Twilight of the Idols" },
+  { text: "The individual has always had to struggle to not be overwhelmed by the tribe.", author: "Friedrich Nietzsche, Beyond Good and Evil" },
+  { text: "Amor fati: love your fate, which is what is your existence.", author: "Friedrich Nietzsche, The Gay Science" },
+  { text: "No price is too high to pay for the privilege of owning yourself.", author: "Friedrich Nietzsche" },
+  { text: "Become who you are!", author: "Friedrich Nietzsche, Thus Spoke Zarathustra" },
+  { text: "The secret of realizing the greatest fruitfulness is to live dangerously.", author: "Friedrich Nietzsche, The Gay Science" },
+  { text: "Man is something that shall be overcome.", author: "Friedrich Nietzsche, Thus Spoke Zarathustra" },
+  { text: "To live is an unfathomable privilege.", author: "Søren Kierkegaard, Either/Or" },
+
+  // Aristotle, Plato, & Ancient Thinkers
+  { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle (Compiled by Will Durant)" },
+  { text: "Patience is bitter, but its fruit is sweet.", author: "Aristotle" },
+  { text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle" },
+  { text: "It is the mark of an educated mind to be able to entertain a thought without accepting it.", author: "Aristotle, Metaphysics" },
+  { text: "Excellence is never an accident. It is always the result of high intention and intelligent execution.", author: "Aristotle" },
+  { text: "Education is the best provision for old age.", author: "Aristotle, Diogenes Laërtius" },
+  { text: "Energy of the mind is the essence of life.", author: "Aristotle" },
+  { text: "The roots of education are bitter, but the fruit is sweet.", author: "Aristotle" },
+  { text: "Wise men speak because they have something to say; fools because they have to say something.", author: "Plato" },
+  { text: "Courage is knowing what not to fear.", author: "Plato, Laches" },
+
+  // Immanuel Kant, Spinoza, & Descartes
+  { text: "Two things fill the mind with ever new and increasing admiration: the starry heavens above me and the moral law within me.", author: "Immanuel Kant, Critique of Practical Reason" },
+  { text: "Act only according to that maxim whereby you can at the same time will that it should become a universal law.", author: "Immanuel Kant, Groundwork of the Metaphysics of Morals" },
+  { text: "Enlightenment is man's emergence from his self-incurred immaturity.", author: "Immanuel Kant, An Answer to the Question: What is Enlightenment?" },
+  { text: "Freedom is the recognition of necessity.", author: "Baruch Spinoza, Ethics" },
+  { text: "I think, therefore I am.", author: "René Descartes, Discourse on the Method" },
+  { text: "Peace is not absence of conflict, it is the ability to handle conflict by peaceful means.", author: "Baruch Spinoza, Political Treatise" },
+  { text: "Everything excellent is as difficult as it is rare.", author: "Baruch Spinoza, Ethics" },
+  { text: "He who thinks he can do without others is mistaken; but he who thinks others can do without him is even more deluded.", author: "François de La Rochefoucauld, Maxims" },
+  { text: "Kindness is the language which the deaf can hear and the blind can see.", author: "Mark Twain" },
+  { text: "The desire to know is natural to good men.", author: "Leonardo da Vinci" },
+
+  // Arthur Schopenhauer & Intellectual Depth
+  { text: "A man can be what he wants as long as he has the intelligence to want what is right and the strength to pursue it.", author: "Arthur Schopenhauer" },
+  { text: "Talent hits a target no one else can hit; Genius hits a target no one else can see.", author: "Arthur Schopenhauer" },
+  { text: "Most people take the limits of their vision for the limits of the world.", author: "Arthur Schopenhauer, Studies in Pessimism" },
+  { text: "Compassion is the basis of morality.", author: "Arthur Schopenhauer, The Basis of Morality" },
+  { text: "The safe way is never the best way.", author: "Søren Kierkegaard" },
+  { text: "Change is the only constant.", author: "Heraclitus" },
+  { text: "To evaluate our progress, we must measure our discipline against our potential, not against other men.", author: "Seneca" },
+  { text: "The task is not so much to see what no one has yet seen, but to think what nobody has yet thought.", author: "Arthur Schopenhauer" },
+  { text: "Great minds discuss ideas; average minds discuss events; small minds discuss people.", author: "Eleanor Roosevelt" },
+  { text: "Discovery consists of seeing what everybody has seen and thinking what nobody has thought.", author: "Albert Szent-Györgyi (Nobel Laureate)" },
+
+  // Eastern Philosophy & Ancient Sages
+  { text: "The journey of a thousand miles begins with a single step.", author: "Lao Tzu, Tao Te Ching" },
+  { text: "Knowing others is intelligence; knowing yourself is true mastery.", author: "Lao Tzu, Tao Te Ching" },
+  { text: "Mastering others is strength; mastering yourself is true power.", author: "Lao Tzu, Tao Te Ching" },
+  { text: "He who conquers others is strong; he who conquers himself is mighty.", author: "Lao Tzu, Tao Te Ching" },
+  { text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", author: "Buddha, Dhammapada" },
+  { text: "Your work is to discover your work and then with all your heart to give yourself to it.", author: "Buddha" },
+  { text: "Thousands of candles can be lighted from a single candle, and the life of the candle will not be shortened.", author: "Buddha" },
+  { text: "An uncontrolled mind leads to ruin.", author: "Buddha, Dhammapada" },
+  { text: "Pain is inevitable. Suffering is optional.", author: "Buddhist Proverb" },
+  { text: "To understand everything is to forgive everything.", author: "French Proverb" },
+
+  // Modern Philosophers, Thinkers, & Scientists
+  { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+  { text: "Logic will get you from A to B. Imagination will take you everywhere.", author: "Albert Einstein" },
+  { text: "The important thing is not to stop questioning. Curiosity has its own reason for existing.", author: "Albert Einstein" },
+  { text: "Failure is simply the opportunity to begin again, this time more wisely.", author: "Henry Ford" },
+  { text: "We cannot solve our problems with the same thinking we used when we created them.", author: "Albert Einstein" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+  { text: "Our greatest glory is not in never falling, but in rising every time we fall.", author: "Confucius" },
+  { text: "The mind is everything. What you think you become.", author: "Buddha" },
+  { text: "Character cannot be developed in ease and quiet. Only through experience can the soul be strengthened.", author: "Helen Keller" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+
+  // Deep Reflection on Persistence & Self-Mastery
+  { text: "To dare is to lose one's footing momentarily. Not to dare is to lose oneself.", author: "Søren Kierkegaard" },
+  { text: "The price of excellence is discipline. The cost of mediocrity is disappointment.", author: "William Arthur Ward" },
+  { text: "Discipline is the bridge between goals and accomplishment.", author: "Jim Rohn" },
+  { text: "You cannot find peace by avoiding life.", author: "Virginia Woolf" },
+  { text: "Do not pray for an easy life, pray for the strength to endure a difficult one.",  author: "Bruce Lee" },
+  { text: "A river cuts through rock not because of its power, but because of its persistence.", author: "James N. Watkins" },
+  { text: "What you do today speaks so loudly that I cannot hear what you say.", author: "Ralph Waldo Emerson" },
+  { text: "We are shaped and fashioned by what we love.", author: "Johann Wolfgang von Goethe" },
+  { text: "To think is easy. To act is hard. But the hardest thing is to act in accordance with your thinking.", author: "Johann Wolfgang von Goethe" },
+  { text: "In the depth of winter, I finally learned that within me there lay an invincible summer.", author: "Albert Camus, Return to Tipasa" },
+
+  // Final Hard-Hitting Truths
+  { text: "Procrastination is the thief of time, collar him.", author: "Charles Dickens, David Copperfield" },
+  { text: "A man is but the product of his thoughts. What he thinks, he becomes.", author: "Mahatma Gandhi" },
+  { text: "He who has a strong enough why can survive almost any how.", author: "Viktor Frankl, Man's Search for Meaning" },
+  { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
+  { text: "The man who moves a mountain begins by carrying away small stones.", author: "Confucius" },
+  { text: "You don't have to be extreme, just consistent.", author: "Anonymous Proverb" },
+  { text: "Hard choices, early discipline: easy life. Easy choices, instant gratification: hard life.", author: "Shane Parrish" },
+  { text: "Show me your daily habits, and I will show you your future.", author: "Aristotelian Maxim" },
+  { text: "The greatest danger for most of us is not that our aim is too high and we miss it, but that it is too low.", author: "Michelangelo Buonarroti" },
+  { text: "Mastering others is temporary; mastering your own mind is eternal.", author: "Lao Tzu, Tao Te Ching" }
+];
+
+const selectedQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+document.getElementById("dailyQuote").innerHTML = `${selectedQuote.text}<br><span style="display:block; margin-top:8px; font-size:13px; font-style:normal; color:#94a3b8; font-weight:500;">— ${selectedQuote.author}</span>`;
+
+// BACKGROUND DESKTOP SAVE LOGIC
+const save = async () => {
+  render();
+  try {
+    await window.api.saveData({ topics: TOPICS, progress: state, username, deadline });
+    return true;
+  } catch (error) {
+    console.error("Failed to save progress:", error);
+    alert(`Could not save progress: ${error.message}`);
+    return false;
+  }
+};
+
+const CSV_HEADERS = ["id", "topic", "category", "marks", "status", "pyq", "revision", "test", "note"];
+const REQUIRED_CSV_HEADERS = CSV_HEADERS.filter(header => header !== "note");
+const csvCell = value => `"${String(value).replace(/"/g, '""')}"`;
+
+const exportCsv = async () => {
+  const rows = [CSV_HEADERS, ...TOPICS.map(topic => {
+    const progress = get(topic);
+    return [
+      topic.id, topic.name, topic.cat, topic.marks, progress.status,
+      progress.pyq, progress.revision, progress.test, progress.note || ""
+    ];
+  })];
+  const csv = rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+
+  try {
+    const exported = await window.api.exportCsv(csv);
+    if (exported) alert("Progress exported successfully.");
+  } catch (error) {
+    console.error("Failed to export CSV:", error);
+    alert(`Could not export CSV: ${error.message}`);
+  }
+};
+
+const parseCsv = text => {
+  const rows = [];
+  let row = [], cell = "", quoted = false, closedQuote = false;
+  text = text.replace(/^\uFEFF/, "");
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (quoted) {
+      if (char === '"' && text[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (char === '"') {
+        quoted = false;
+        closedQuote = true;
+      } else {
+        cell += char;
+      }
+    } else if (char === '"') {
+      if (cell.length !== 0 || closedQuote) throw new Error("The CSV contains an unexpected quote.");
+      quoted = true;
+    } else if (char === ",") {
+      if (closedQuote) closedQuote = false;
+      row.push(cell);
+      cell = "";
+    } else if (char === "\n" || char === "\r") {
+      if (closedQuote) closedQuote = false;
+      if (char === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else if (closedQuote) {
+      throw new Error("The CSV contains characters after a quoted field.");
+    } else {
+      cell += char;
+    }
+  }
+
+  if (quoted) throw new Error("The CSV contains an unterminated quoted field.");
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+  return rows.filter(csvRow => csvRow.some(value => value.length));
+};
+
+const importCsv = async () => {
+  try {
+    const csv = await window.api.importCsv();
+    if (csv === null) return;
+
+    const [headers, ...parsedRows] = parseCsv(csv);
+    if (!headers || REQUIRED_CSV_HEADERS.some(header => !headers.includes(header))) {
+      throw new Error(`CSV must include these columns: ${REQUIRED_CSV_HEADERS.join(", ")}.`);
+    }
+    if (new Set(headers).size !== headers.length) throw new Error("CSV contains duplicate column names.");
+
+    const column = Object.fromEntries(headers.map((header, index) => [header, index]));
+    if (column.record_type !== undefined &&
+        (column.username === undefined || column.deadline === undefined)) {
+      throw new Error("CSV metadata is missing username or deadline columns.");
+    }
+    const metadataRow = column.record_type === undefined
+      ? null
+      : parsedRows.find(row => row[column.record_type] === "metadata");
+    const rows = parsedRows.filter(row =>
+      column.record_type === undefined || row[column.record_type] !== "metadata"
+    );
+    const importedTopics = [];
+    const imported = {};
+
+    rows.forEach((row, rowIndex) => {
+      if (row.length !== headers.length) {
+        throw new Error(`CSV row ${rowIndex + 2} has ${row.length} fields; expected ${headers.length}.`);
+      }
+
+      const value = header => row[column[header]];
+      const id = value("id");
+      const name = value("topic").trim();
+      const category = value("category");
+      const marks = Number(value("marks"));
+      if (!validTopicId(id)) throw new Error(`CSV row ${rowIndex + 2} has an invalid topic ID.`);
+      if (!name || name.length > 160) throw new Error(`CSV row ${rowIndex + 2} has an invalid topic name.`);
+      if (!["bumper", "major", "minor"].includes(category)) throw new Error(`CSV row ${rowIndex + 2} has an invalid category.`);
+      if (!Number.isFinite(marks) || marks <= 0) throw new Error(`CSV row ${rowIndex + 2} has invalid marks.`);
+      if (Object.hasOwn(imported, id)) throw new Error(`CSV contains duplicate topic ID "${id}".`);
+
+      if (!["remaining", "doing", "completed", "skip"].includes(value("status"))) {
+        throw new Error(`CSV row ${rowIndex + 2} has an invalid status.`);
+      }
+
+      const parseBoolean = header => {
+        const field = value(header).toLowerCase();
+        if (field !== "true" && field !== "false") {
+          throw new Error(`CSV row ${rowIndex + 2} has an invalid ${header} value.`);
+        }
+        return field === "true";
+      };
+
+      imported[id] = {
+        status: value("status"),
+        pyq: parseBoolean("pyq"),
+        revision: parseBoolean("revision"),
+        test: parseBoolean("test"),
+        note: column.note === undefined ? "" : value("note")
+      };
+      if (imported[id].note.length > 10000) {
+        throw new Error(`CSV row ${rowIndex + 2} has a note that exceeds 10,000 characters.`);
+      }
+      importedTopics.push({ id, name, cat: category, marks });
+    });
+
+    if (!rows.length && !metadataRow) throw new Error("The CSV contains no topic data.");
+    let importedUsername = username;
+    let importedDeadline = deadline;
+    if (metadataRow) {
+      importedUsername = metadataRow[column.username].trim();
+      importedDeadline = metadataRow[column.deadline] || deadline;
+      if (importedUsername.length > 50 || !validDeadline(importedDeadline)) {
+        throw new Error("The CSV contains invalid username or deadline metadata.");
+      }
+    }
+    if (!confirm(`Import ${rows.length} topics and their progress? This will replace your current topic list and progress.`)) return;
+
+    const previousState = state;
+    const previousTopics = TOPICS;
+    const previousUsername = username;
+    const previousDeadline = deadline;
+    state = imported;
+    TOPICS = importedTopics;
+    if (metadataRow) {
+      username = importedUsername;
+      deadline = importedDeadline;
+    }
+    if (!await save()) {
+      state = previousState;
+      TOPICS = previousTopics;
+      username = previousUsername;
+      deadline = previousDeadline;
+      document.getElementById("deadlineInput").value = deadline;
+      updateGreeting();
+      updateCountdown();
+      render();
+      return;
+    }
+    document.getElementById("deadlineInput").value = deadline;
+    updateGreeting();
+    updateCountdown();
+    alert("Progress imported successfully.");
+  } catch (error) {
+    console.error("Failed to import CSV:", error);
+    alert(`Could not import CSV: ${error.message}`);
+  }
+};
+
+const loadData = async () => {
+  try {
+    const data = await window.api.loadData();
+    if (data && typeof data.username === "string") username = data.username.trim();
+    if (data && Object.hasOwn(data, "deadline")) {
+      if (data.deadline !== "") {
+        if (!validDeadline(data.deadline)) throw new Error("Saved deadline is invalid.");
+        deadline = data.deadline;
+      }
+    }
+    if (data && (Object.hasOwn(data, "topics") || Object.hasOwn(data, "progress"))) {
+      if (!Array.isArray(data.topics) || !data.progress ||
+          typeof data.progress !== "object" || Array.isArray(data.progress)) {
+        throw new Error("Saved tracker data has an invalid format.");
+      }
+      const validTopics = data.topics.every(topic =>
+        topic && validTopicId(topic.id) &&
+        typeof topic.name === "string" && topic.name.trim() && topic.name.length <= 160 &&
+        ["bumper", "major", "minor"].includes(topic.cat) &&
+        Number.isFinite(topic.marks) && topic.marks > 0
+      );
+      const uniqueIds = new Set(data.topics.map(topic => topic.id));
+      if (!validTopics || uniqueIds.size !== data.topics.length) {
+        throw new Error("Saved topic data is invalid.");
+      }
+      TOPICS = data.topics;
+      state = data.progress;
+    } else if (data && typeof data === "object") {
+      state = data;
+    }
+    updateGreeting();
+    document.getElementById("deadlineInput").value = deadline;
+    updateCountdown();
+    render();
+    if (!username) document.getElementById("usernameDialog").showModal();
+  } catch (error) {
+    console.error("Failed to load saved progress:", error);
+    alert(`Could not load saved progress: ${error.message}`);
+    updateGreeting();
+    document.getElementById("deadlineInput").value = deadline;
+    updateCountdown();
+    render();
+  }
+};
+
+function render(){
+  const q=document.getElementById("search").value.trim().toLowerCase();
+  const sf=document.getElementById("statusFilter").value;
+  const cf=document.getElementById("categoryFilter").value;
+  const filtered=TOPICS.filter(t=>{
+    const s=get(t).status;
+    return (!q||t.name.toLowerCase().includes(q))&&(sf==="all"||s===sf)&&(cf==="all"||t.cat===cf);
+  });
+
+  const groups=[
+    ["bumper","🔥 BUMPER TOPICS"],
+    ["major","⭐ MAJOR TOPICS"],
+    ["minor","📌 MINOR TOPICS"]
+  ];
+
+  const topicsEl=document.getElementById("topics");
+  topicsEl.innerHTML=groups.map(([cat,title])=>{
+    const arr=filtered.filter(t=>t.cat===cat);
+    if(!arr.length)return "";
+    const totalMarks=arr.reduce((a,t)=>a+t.marks,0);
+    const closed=!sectionOpen[cat];
+    return `<section class="collapsible ${closed?"closed":""}" data-cat="${cat}">
+      <div class="section-title" role="button" tabindex="0">
+        <h2>${title} <span class="badge">${arr.length} shown · ${fmt(totalMarks)} marks</span></h2>
+        <span class="collapse-arrow">▼</span>
+      </div>
+      <div class="section-body">
+      ${arr.map(t=>{
+        const s=get(t);
+        return `<article class="topic ${s.status}">
+          <div class="topic-main">
+            <div>
+              <div class="name">${esc(t.name)}</div>
+              <div class="checks">
+                <label><input type="checkbox" data-id="${t.id}" data-field="pyq" ${s.pyq?"checked":""}> PYQ</label>
+                <label><input type="checkbox" data-id="${t.id}" data-field="revision" ${s.revision?"checked":""}> Revision</label>
+                <label><input type="checkbox" data-id="${t.id}" data-field="test" ${s.test?"checked":""}> Unit Test</label>
+                ${s.status==="completed"?'<span class="done-note">✓ Completed</span>':""}
+                ${s.status==="skip"?'<span class="done-note" style="color:var(--danger)">⊘ Excluded</span>':""}
+              </div>
+            </div>
+            <div class="meta">
+              <div class="status-group">
+                <button class="status-btn ${s.status==="remaining"?"active":""}" data-id="${t.id}" data-field="status" data-value="remaining">Remaining</button>
+                <button class="status-btn ${s.status==="doing"?"active":""}" data-id="${t.id}" data-field="status" data-value="doing">Doing</button>
+                <button class="status-btn ${s.status==="completed"?"active":""}" data-id="${t.id}" data-field="status" data-value="completed">Completed</button>
+                <button class="status-btn ${s.status==="skip"?"active":""}" data-id="${t.id}" data-field="status" data-value="skip">Exclude</button>
+              </div>
+              <span class="marks">${fmt(t.marks)} marks</span>
+            </div>
+          </div>
+          <div class="topic-actions">
+            <button class="btn note-topic-btn" type="button" data-id="${esc(t.id)}" aria-label="${s.note ? "View or edit" : "Add"} note for ${esc(t.name)}" title="${s.note ? "View or edit note" : "Add note"}">📝 Note</button>
+            <button class="btn edit-topic-btn" type="button" data-id="${esc(t.id)}">Edit</button>
+            <button class="btn danger remove-topic-btn" type="button" data-id="${esc(t.id)}">Remove</button>
+          </div>
+        </article>`;
+      }).join("")}
+      </div>
+    </section>`;
+  }).join("") || '<div class="empty">No topics match your filters.</div>';
+
+  topicsEl.querySelectorAll(".collapsible").forEach(section=>{
+    const head=section.querySelector(".section-title");
+    const toggle=()=>{
+      section.classList.toggle("closed");
+      sectionOpen[section.dataset.cat]=!section.classList.contains("closed");
+    };
+    head.addEventListener("click",toggle);
+  });
+
+  updateStats();
+}
+
+function updateStats(){
+  const total=TOPICS.reduce((a,t)=>a+t.marks,0);
+  document.getElementById("totalMarks").textContent=fmt(total);
+  const completed=TOPICS.filter(t=>get(t).status==="completed");
+  const doing=TOPICS.filter(t=>get(t).status==="doing");
+  const skipped=TOPICS.filter(t=>get(t).status==="skip");
+  const covered=completed.reduce((a,t)=>a+t.marks,0);
+  const excluded=skipped.reduce((a,t)=>a+t.marks,0);
+  const remaining=total-covered-excluded;
+  const pct=total?covered/total*100:0;
+let dataMsg = "";
+  if (pct === 0) dataMsg = "Every grand journey begins with a single step. Claim your first topic today.";
+  else if (pct < 25) dataMsg = `You've locked in ${pct.toFixed(1)}% of the syllabus. The momentum is building. Keep pushing!`;
+  else if (pct < 50) dataMsg = `Incredible work. You've crushed ${pct.toFixed(1)}%. You're building a solid foundation. Don't stop now.`;
+  else if (pct < 75) dataMsg = `${pct.toFixed(1)}% completed! You are past the halfway mark. The summit is in sight!`;
+  else if (pct < 100) dataMsg = `${pct.toFixed(1)}% done. You are in the endgame now. Finish strong!`;
+  else dataMsg = `100% completed. You have mastered the syllabus. You are ready.`;
+  
+  document.getElementById("dataMotivation").innerText = `🔥 ${dataMsg}`;
+  document.getElementById("covered").textContent=fmt(covered);
+  document.getElementById("remaining").textContent=fmt(remaining);
+  document.getElementById("completed").textContent=completed.length;
+  document.getElementById("doing").textContent=doing.length;
+  document.getElementById("excluded").textContent=skipped.length;
+  document.getElementById("excludedMarks").textContent=fmt(excluded);
+  document.getElementById("pct").textContent=pct.toFixed(1)+"%";
+  document.getElementById("bar").style.width=Math.min(100,pct)+"%";
+}
+
+function celebrateCompletion(x, y) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const burst = document.createElement("div");
+  burst.className = "celebration-burst";
+  burst.setAttribute("aria-hidden", "true");
+  burst.style.left = `${x}px`;
+  burst.style.top = `${y}px`;
+  const colors = ["#f97316", "#eab308", "#22c55e", "#3b82f6", "#a855f7", "#ec4899"];
+
+  for (let i = 0; i < 28; i++) {
+    const piece = document.createElement("span");
+    piece.style.backgroundColor = colors[i % colors.length];
+    piece.style.setProperty("--x", `${Math.round(Math.random() * 180 - 90)}px`);
+    piece.style.setProperty("--y", `${Math.round(Math.random() * -150 - 20)}px`);
+    piece.style.setProperty("--rotation", `${Math.round(Math.random() * 720 - 360)}deg`);
+    piece.style.setProperty("--duration", `${800 + Math.round(Math.random() * 400)}ms`);
+    piece.style.setProperty("--delay", `${Math.round(Math.random() * 80)}ms`);
+    burst.append(piece);
+  }
+
+  document.body.append(burst);
+  window.setTimeout(() => burst.remove(), 1400);
+}
+
+document.addEventListener("change",e=>{
+ const el=e.target;
+ if(el.type === "checkbox") {
+   const id=el.dataset.id, field=el.dataset.field;
+   if(!id||!field)return;
+   state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false},state[id]||{});
+   state[id][field]=el.checked;
+   save();
+ }
+});
+
+document.addEventListener("click", e=>{
+  const target = e.target;
+  if (!(target instanceof Element)) return;
+  const el = target.closest("button");
+  if (!el) return;
+  if(el.classList.contains("note-topic-btn")) {
+    const topic = TOPICS.find(item => item.id === el.dataset.id);
+    if (!topic) return;
+    const progress = get(topic);
+    document.getElementById("topicNoteTitle").textContent = `Note: ${topic.name}`;
+    document.getElementById("topicNoteText").value = progress.note || "";
+    document.getElementById("topicNoteForm").dataset.topicId = topic.id;
+    document.getElementById("topicNoteDialog").showModal();
+    document.getElementById("topicNoteText").focus();
+    return;
+  }
+  if(el.classList.contains("edit-topic-btn")) {
+    const topic = TOPICS.find(item => item.id === el.dataset.id);
+    if (!topic) return;
+    const form = document.getElementById("editTopicForm");
+    form.elements.name.value = topic.name;
+    form.elements.marks.value = topic.marks;
+    form.elements.category.value = topic.cat;
+    form.dataset.topicId = topic.id;
+    document.getElementById("editTopicDialog").showModal();
+    return;
+  }
+  if(el.classList.contains("remove-topic-btn")) {
+    const id = el.dataset.id;
+    const topic = TOPICS.find(item => item.id === id);
+    if (!topic || !confirm(`Remove "${topic.name}" and its saved progress?`)) return;
+    const previousTopics = TOPICS;
+    const previousState = state;
+    TOPICS = TOPICS.filter(item => item.id !== id);
+    state = { ...state };
+    delete state[id];
+    save().then(saved => {
+      if (!saved) {
+        TOPICS = previousTopics;
+        state = previousState;
+      }
+      render();
+    });
+    return;
+  }
+  if(el.classList.contains("status-btn")) {
+    const id = el.dataset.id;
+    const field = el.dataset.field;
+    const val = el.dataset.value;
+    if(!id || !field) return;
+    state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false}, state[id]||{});
+    const previousStatus = state[id][field];
+    state[id][field] = val;
+    save().then(saved => {
+      if (saved && field === "status" && val === "completed" && previousStatus !== "completed") {
+        celebrateCompletion(e.clientX, e.clientY);
+      }
+    });
+  }
+});
+
+document.getElementById("cancelEditTopic").addEventListener("click", () => {
+  document.getElementById("editTopicDialog").close();
+});
+document.getElementById("cancelTopicNote").addEventListener("click", () => {
+  document.getElementById("topicNoteDialog").close();
+});
+document.getElementById("topicNoteForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const topicId = form.dataset.topicId;
+  const note = form.elements.note.value;
+  if (!TOPICS.some(topic => topic.id === topicId) || note.length > 10000) {
+    alert("Enter a note of 10,000 characters or fewer.");
+    return;
+  }
+
+  const previousState = state;
+  state = { ...state };
+  state[topicId] = Object.assign(
+    { status: "remaining", pyq: false, revision: false, test: false },
+    state[topicId] || {},
+    { note }
+  );
+  if (await save()) {
+    document.getElementById("topicNoteDialog").close();
+  } else {
+    state = previousState;
+    render();
+  }
+});
+document.getElementById("usernameDialog").addEventListener("cancel", event => {
+  event.preventDefault();
+});
+document.getElementById("usernameForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const name = form.elements.username.value.trim().slice(0, 50);
+  if (!name) {
+    form.elements.username.setCustomValidity("Please enter your name.");
+    form.elements.username.reportValidity();
+    return;
+  }
+  form.elements.username.setCustomValidity("");
+  username = name;
+  if (await save()) {
+    updateGreeting();
+    document.getElementById("usernameDialog").close();
+  } else {
+    username = "";
+  }
+});
+document.getElementById("editTopicForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const topicId = form.dataset.topicId;
+  const name = form.elements.name.value.trim();
+  const marks = Number(form.elements.marks.value);
+  const cat = form.elements.category.value;
+  if (!name || name.length > 160 || !Number.isFinite(marks) || marks <= 0 ||
+      !["bumper", "major", "minor"].includes(cat)) {
+    alert("Enter a topic name, positive marks, and a valid category.");
+    return;
+  }
+
+  const previousTopics = TOPICS;
+  TOPICS = TOPICS.map(topic => topic.id === topicId
+    ? { ...topic, name, marks, cat }
+    : topic);
+  if (await save()) {
+    document.getElementById("editTopicDialog").close();
+  } else {
+    TOPICS = previousTopics;
+    render();
+  }
+});
+
+["search","statusFilter","categoryFilter"].forEach(id=>document.getElementById(id).addEventListener(id==="search"?"input":"change",render));
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+ if(confirm("Are you sure you want to completely erase your saved desktop data?")){
+   state={};
+   save();
+ }
+});
+document.getElementById("exportBtn").addEventListener("click", exportCsv);
+document.getElementById("importBtn").addEventListener("click", importCsv);
+document.getElementById("changeSaveLocationBtn").addEventListener("click", async () => {
+  try {
+    const selectedPath = await window.api.chooseDataLocation({
+      topics: TOPICS, progress: state, username, deadline
+    });
+    if (selectedPath) alert(`Tracker data will now be saved to:\n${selectedPath}`);
+  } catch (error) {
+    console.error("Failed to change the data save location:", error);
+    alert(`Could not change the data save location: ${error.message}`);
+  }
+});
+document.getElementById("deadlineInput").addEventListener("change", async event => {
+  const input = event.currentTarget;
+  if (!validDeadline(input.value)) {
+    alert("Choose a valid deadline date.");
+    input.value = deadline;
+    return;
+  }
+  const previousDeadline = deadline;
+  deadline = input.value;
+  updateCountdown();
+  if (!await save()) {
+    deadline = previousDeadline;
+    input.value = deadline;
+    updateCountdown();
+  }
+});
+document.getElementById("topicForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const name = form.elements.name.value.trim();
+  const marks = Number(form.elements.marks.value);
+  const cat = form.elements.category.value;
+  if (!name || name.length > 160 || !Number.isFinite(marks) || marks <= 0) {
+    alert("Enter a topic name and positive marks.");
+    return;
+  }
+
+  const topic = { id: `custom-${crypto.randomUUID()}`, name, cat, marks };
+  const previousTopics = TOPICS;
+  TOPICS = [...TOPICS, topic];
+  if (await save()) form.reset();
+  else TOPICS = previousTopics;
+  render();
+});
+
+// EXAM COUNTDOWN TIMER
+function updateCountdown() {
+  const [year, month, day] = deadline.split("-").map(Number);
+  const examDate = new Date(year, month - 1, day).getTime();
+  const now = new Date().getTime();
+  const distance = examDate - now;
+
+  if (distance <= 0) {
+    document.getElementById("countdownTimer").textContent = "🚀 Deadline reached!";
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("countdownTimer").textContent =
+    `⏳ ${days}d ${hours}h ${mins}m ${seconds}s left`;
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// START
+loadData();
+</script>
+</body>
+</html>
