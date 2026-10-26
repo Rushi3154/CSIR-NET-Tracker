@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSIR-NET Chemistry Topic Tracker</title>
+<title>CSIR-NET Chemistry Topic Tracker v2.0</title>
 <script>
   let savedTheme = null;
   try {
@@ -11,36 +11,34 @@
   } catch (error) {
     console.warn("Could not read the saved appearance preference:", error);
   }
-  document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light"
-    ? savedTheme
-    : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.dataset.theme = savedTheme === "dark" ? "dark" : "light";
 </script>
 <style>
 :root {
   color-scheme: light;
-  --bg: #eae7df; --card: rgb(247 245 239 / 0.84); --surface: #f7f5ef;
-  --surface-soft: rgb(239 236 228 / 0.88); --text: #34332f; --muted: #77746d;
-  --border: rgb(72 67 55 / 0.11); --accent: #4c6f9d; --accent-hover: #3f5e86;
-  --accent2: #52856c; --doing: #a77d3c; --danger: #b85f56;
+  --bg: #dce8f4; --card: rgb(248 251 255 / 0.72); --surface: #f7faff;
+  --surface-soft: rgb(237 244 252 / 0.78); --text: #202b3c; --muted: #617186;
+  --border: rgb(255 255 255 / 0.48); --accent: #1768c4; --accent-hover: #0f56a7;
+  --accent2: #16835c; --doing: #a86106; --danger: #c03945;
   --radius-sm: 12px; --radius-md: 18px; --radius-lg: 24px;
-  --shadow-sm: 0 2px 10px rgb(65 57 42 / 0.045);
-  --shadow: 0 12px 34px rgb(65 57 42 / 0.075);
-  --shadow-lg: 0 24px 64px rgb(65 57 42 / 0.15);
-  --glass-border: rgb(255 253 247 / 0.72);
-  --focus-ring: 0 0 0 4px rgb(76 111 157 / 0.15);
+  --shadow-sm: 0 2px 10px rgb(35 56 82 / 0.07);
+  --shadow: 0 10px 28px rgb(35 56 82 / 0.12);
+  --shadow-lg: 0 20px 50px rgb(35 56 82 / 0.19);
+  --glass-border: rgb(255 255 255 / 0.6);
+  --focus-ring: 0 0 0 4px rgb(23 104 196 / 0.18);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #101114; --card: rgb(31 33 39 / 0.76); --surface: #24262d;
-  --surface-soft: rgb(39 41 48 / 0.82); --text: #f5f5f7; --muted: #a1a3ad;
-  --border: rgb(255 255 255 / 0.09); --accent: #6ea5ff; --accent-hover: #8bb7ff;
-  --accent2: #55c98b; --doing: #f2b84b; --danger: #ff716b;
-  --shadow-sm: 0 2px 12px rgb(0 0 0 / 0.15);
-  --shadow: 0 14px 38px rgb(0 0 0 / 0.2);
-  --shadow-lg: 0 24px 68px rgb(0 0 0 / 0.38);
-  --glass-border: rgb(255 255 255 / 0.1);
-  --focus-ring: 0 0 0 4px rgb(110 165 255 / 0.2);
+  --bg: #171d28; --card: rgb(37 47 63 / 0.72); --surface: #252e3d;
+  --surface-soft: rgb(53 66 85 / 0.72); --text: #e8edf5; --muted: #a7b2c2;
+  --border: rgb(207 221 242 / 0.1); --accent: #8bbcff; --accent-hover: #b4d2ff;
+  --accent2: #7dd6b0; --doing: #f0bd72; --danger: #f08f98;
+  --shadow-sm: 0 2px 12px rgb(3 8 16 / 0.18);
+  --shadow: 0 12px 34px rgb(3 8 16 / 0.25);
+  --shadow-lg: 0 24px 60px rgb(3 8 16 / 0.38);
+  --glass-border: rgb(221 233 250 / 0.12);
+  --focus-ring: 0 0 0 4px rgb(139 188 255 / 0.22);
 }
 
 * { box-sizing: border-box; }
@@ -66,6 +64,8 @@ button, .select, input { font: inherit; transition: all 0.2s ease; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 0 0 24px; }
 .stat { background: var(--card); border: none; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); transition: transform 0.2s ease; }
 .stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.stat[role="button"] { cursor: pointer; }
+.stat[role="button"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .stat small { display: block; color: var(--muted); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
 .stat strong { display: block; font-size: 28px; font-weight: 700; margin-top: 8px; color: #111827; }
 
@@ -92,6 +92,17 @@ dialog::backdrop { background: rgb(15 23 42 / 0.45); }
 .edit-form input, .edit-form select { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font: inherit; }
 .edit-form textarea { width: 100%; min-height: 220px; resize: vertical; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text); background: var(--surface-soft); font: inherit; line-height: 1.5; }
 .edit-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+.topic-list-dialog { width: min(560px, calc(100% - 32px)); max-height: min(680px, calc(100% - 32px)); overflow: hidden; }
+.topic-list-dialog[open]::backdrop { background: rgb(15 23 42 / 0.45); }
+.topic-list-dialog h2 { margin: 0; font-size: 20px; }
+.topic-list { display: grid; gap: 8px; max-height: min(52vh, 440px); overflow-y: auto; padding: 2px 6px 2px 2px; margin: 0; list-style: none; }
+.topic-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--surface-soft); }
+.topic-list-name { min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.topic-list-meta { flex: 0 0 auto; color: var(--muted); font-size: 12px; }
+.topic-list-empty { margin: 0; color: var(--muted); text-align: center; padding: 20px 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .topic-list-dialog::backdrop { transition-duration: 0.01ms; }
+}
 
 .collapsible { border: none; border-radius: var(--radius-md); background: transparent; margin: 24px 0; }
 .section-title { padding: 16px 20px; margin: 0 !important; cursor: pointer; user-select: none; background: var(--card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s ease; }
@@ -113,7 +124,8 @@ dialog::backdrop { background: rgb(15 23 42 / 0.45); }
 .exam-date { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .deadline-input { border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 6px 8px; color: inherit; font: inherit; }
 
-.topic-main { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+.topic-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; }
+.topic-main > div:first-child { min-width: 0; }
 .name { font-weight: 600; font-size: 16px; color: #111827; }
 .marks { font-weight: 700; white-space: nowrap; background: #f3f4f6; padding: 8px 12px; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
 
@@ -125,11 +137,12 @@ dialog::backdrop { background: rgb(15 23 42 / 0.45); }
 .status-btn.active[data-value="completed"] { background: #d1fae5; color: #047857; box-shadow: var(--shadow-sm); }
 .status-btn.active[data-value="skip"] { background: #fee2e2; color: #b91c1c; box-shadow: var(--shadow-sm); }
 
-.checks { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: 14px; }
+.checks { display: flex; gap: 12px 20px; flex-wrap: wrap; align-items: center; margin-top: 12px; color: var(--muted); font-size: 14px; }
 .checks label { display: flex; align-items: center; gap: 8px; cursor: pointer; transition: color 0.2s; }
 .checks label:hover { color: var(--text); }
 .checks input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
-.meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
+.meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.status-group { flex-wrap: wrap; }
 .done-note { color: var(--accent2); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
 .empty { text-align: center; color: var(--muted); padding: 40px; font-size: 15px; background: var(--card); border-radius: var(--radius-md); border: 1px dashed var(--border); }
 
@@ -239,7 +252,115 @@ dialog { background: var(--surface); color: var(--text); }
     transform: translate3d(var(--x), var(--y), 0) rotate(var(--rotation)) scale(0.7);
   }
 }
-.checks { color: var(--muted); }
+.checks { color: var(--muted); align-items: center; }
+.lecture-tracker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-soft);
+  padding: 3px 8px 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+.lecture-tracker .lecture-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+.lecture-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.lecture-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--card);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(65 57 42 / 0.1);
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  padding: 0;
+  line-height: 1;
+}
+.lecture-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+  transform: scale(1.1);
+}
+.lecture-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.lecture-btn:disabled,
+.lecture-input:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.lecture-tracker.disabled {
+  opacity: 0.55;
+}
+.lecture-input {
+  width: 42px;
+  text-align: center;
+  border: 0;
+  background: var(--card);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 2px 4px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: inset 0 1px 2px rgb(65 57 42 / 0.05);
+  -moz-appearance: textfield;
+}
+.lecture-input::-webkit-outer-spin-button,
+.lecture-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.topic-form input[name="lectures"] { min-width: 110px; max-width: 140px; }
+.stat.clickable {
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.stat.clickable:focus-visible {
+  outline: 3px solid rgb(76 111 157 / 0.55);
+  outline-offset: 3px;
+}
+.stat-target {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.9;
+}
+.stat.clickable:hover .stat-target {
+  opacity: 1;
+  text-decoration: underline;
+}
 input[type="checkbox"] { accent-color: var(--accent); }
 :focus-visible { outline: 3px solid rgb(76 111 157 / 0.55); outline-offset: 3px; }
 .theme-switcher {
@@ -257,7 +378,7 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .theme-switcher button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
 .theme-switcher button:hover { color: var(--accent); }
 @media (max-width: 720px) {
-  .container { padding: 28px 16px 100px; }
+  .container { padding: 28px 16px calc(100px + env(safe-area-inset-bottom)); }
   .top { align-items: flex-start; }
   .actions { width: 100%; }
   .actions .btn { flex: 1 1 auto; }
@@ -266,6 +387,11 @@ input[type="checkbox"] { accent-color: var(--accent); }
   .status-group { flex-wrap: wrap; }
   .section-title { align-items: flex-start; gap: 10px; }
   .section-title h2 { flex-wrap: wrap; font-size: 16px; }
+}
+@media (max-width: 900px) {
+  .topic-main { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .meta { justify-content: space-between; }
+  .status-group { flex: 1 1 auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
@@ -285,6 +411,7 @@ input[type="checkbox"] { accent-color: var(--accent); }
   -webkit-app-region: drag;
   user-select: none;
 }
+.window-bar[hidden] { display: none; }
 .window-title {
   display: flex;
   align-items: center;
@@ -317,6 +444,16 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .window-controls button.close:hover { background: #c42b1c; color: #fff; }
 .window-controls svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; }
 @media (max-width: 520px) {
+  .container { padding-inline: 14px; }
+  .actions .btn { min-height: 44px; }
+  .controls > * { width: 100%; min-width: 0; }
+  .topic-form input, .topic-form select, .topic-form input[name="name"] {
+    width: 100%; min-width: 0;
+  }
+  .topic-form button { width: 100%; min-height: 44px; }
+  .exam { align-items: flex-start; flex-direction: column; }
+  .status-group { width: 100%; border-radius: var(--radius-md); }
+  .status-btn { flex: 1 1 40%; min-height: 40px; }
   .window-title { font-size: 12px; }
   .window-controls button { width: 40px; }
 }
@@ -368,11 +505,136 @@ input[type="checkbox"] { accent-color: var(--accent); }
   box-shadow: 0 10px 32px rgb(65 57 42 / 0.14);
 }
 dialog { border: 0; }
+
+.stat[role="button"] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 112px;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms ease, background 220ms ease;
+}
+.stat[role="button"]:hover { transform: translateY(-3px); }
+.stat[role="button"]:active { transform: scale(0.98); }
+.progress-card[data-topic-list] { cursor: pointer; transition: transform 220ms ease, box-shadow 220ms ease; }
+.progress-card[data-topic-list]:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.progress-card[data-topic-list]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(ellipse at 14% 0%, rgb(255 255 255 / 0.9), transparent 34rem),
+    radial-gradient(ellipse at 92% 10%, rgb(179 211 241 / 0.65), transparent 36rem),
+    linear-gradient(145deg, #e8f0f8, #cfdeed);
+  background-attachment: fixed;
+}
+:root[data-theme="light"] .window-bar {
+  background: rgb(245 249 255 / 0.56);
+  border-bottom: 1px solid rgb(255 255 255 / 0.48);
+  backdrop-filter: blur(30px) saturate(145%);
+  -webkit-backdrop-filter: blur(30px) saturate(145%);
+}
+:root[data-theme="light"] .greeting,
+:root[data-theme="light"] .stat,
+:root[data-theme="light"] .progress-card,
+:root[data-theme="light"] .topic-form,
+:root[data-theme="light"] .section-title,
+:root[data-theme="light"] .topic,
+:root[data-theme="light"] .empty,
+:root[data-theme="light"] .exam,
+:root[data-theme="light"] .btn,
+:root[data-theme="light"] .search,
+:root[data-theme="light"] .select,
+:root[data-theme="light"] .topic-form input,
+:root[data-theme="light"] .topic-form select,
+:root[data-theme="light"] .edit-form input,
+:root[data-theme="light"] .edit-form select,
+:root[data-theme="light"] .edit-form textarea,
+:root[data-theme="light"] dialog,
+:root[data-theme="light"] .theme-switcher {
+  border: 1px solid rgb(255 255 255 / 0.58);
+  background-color: var(--card);
+  box-shadow: 0 8px 24px rgb(39 62 89 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.66);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+}
+:root[data-theme="light"] .stat strong,
+:root[data-theme="light"] .name { color: var(--text); }
+:root[data-theme="light"] .motivation-banner {
+  background: linear-gradient(135deg, rgb(45 88 135 / 0.88), rgb(60 105 151 / 0.82));
+  border-color: rgb(255 255 255 / 0.34);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+}
+:root[data-theme="light"] .exam { color: var(--text); }
+:root[data-theme="light"] .marks,
+:root[data-theme="light"] .topic-list li { background: rgb(230 239 249 / 0.74); color: var(--text); }
+:root[data-theme="light"] .theme-switcher button[aria-pressed="true"] {
+  background: rgb(255 255 255 / 0.88);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgb(39 62 89 / 0.1);
+}
+:root[data-theme="light"] dialog::backdrop { background: rgb(35 51 72 / 0.3); }
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(ellipse at 12% 0%, rgb(87 111 151 / 0.2), transparent 36rem),
+    radial-gradient(ellipse at 90% 12%, rgb(111 93 137 / 0.15), transparent 34rem),
+    linear-gradient(145deg, #1b2432, #151a24);
+  background-attachment: fixed;
+}
+:root[data-theme="dark"] .window-bar {
+  background: rgb(27 36 50 / 0.66);
+  border-bottom: 1px solid rgb(221 233 250 / 0.1);
+  backdrop-filter: blur(30px) saturate(135%);
+  -webkit-backdrop-filter: blur(30px) saturate(135%);
+}
+:root[data-theme="dark"] .greeting,
+:root[data-theme="dark"] .stat,
+:root[data-theme="dark"] .progress-card,
+:root[data-theme="dark"] .topic-form,
+:root[data-theme="dark"] .section-title,
+:root[data-theme="dark"] .topic,
+:root[data-theme="dark"] .empty,
+:root[data-theme="dark"] .exam,
+:root[data-theme="dark"] .btn,
+:root[data-theme="dark"] .search,
+:root[data-theme="dark"] .select,
+:root[data-theme="dark"] .topic-form input,
+:root[data-theme="dark"] .topic-form select,
+:root[data-theme="dark"] .edit-form input,
+:root[data-theme="dark"] .edit-form select,
+:root[data-theme="dark"] .edit-form textarea,
+:root[data-theme="dark"] dialog,
+:root[data-theme="dark"] .theme-switcher {
+  border: 1px solid rgb(221 233 250 / 0.1);
+  background-color: var(--card);
+  box-shadow: 0 10px 28px rgb(3 8 16 / 0.2), inset 0 1px 0 rgb(221 233 250 / 0.08);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+}
+:root[data-theme="dark"] .stat strong,
+:root[data-theme="dark"] .name { color: var(--text); }
+:root[data-theme="dark"] .motivation-banner {
+  background: linear-gradient(135deg, rgb(49 72 105 / 0.88), rgb(67 57 87 / 0.82));
+  border-color: rgb(221 233 250 / 0.12);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+}
+:root[data-theme="dark"] .motivation-quote { color: #e7edf7; }
+:root[data-theme="dark"] .motivation-data { color: #a8e2c8; background: rgb(77 166 123 / 0.17); }
+:root[data-theme="dark"] .exam { color: var(--text); }
+:root[data-theme="dark"] .marks,
+:root[data-theme="dark"] .topic-list li { background: rgb(65 80 102 / 0.62); color: var(--text); }
+:root[data-theme="dark"] .theme-switcher button[aria-pressed="true"] {
+  background: rgb(224 233 246 / 0.14);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.14);
+}
+:root[data-theme="dark"] dialog::backdrop { background: rgb(8 12 19 / 0.58); }
 </style>
 </head>
 <body>
 <header class="window-bar" aria-label="Application title bar" ondblclick="window.api?.toggleMaximizeWindow()">
-  <div class="window-title"><span class="window-title-icon" aria-hidden="true">🧪</span><span>CSIR-NET Chemistry Topic Tracker</span></div>
+  <div class="window-title"><span class="window-title-icon" aria-hidden="true">🧪</span><span>CSIR-NET Chemistry Topic Tracker v2.0</span></div>
   <nav class="window-controls" aria-label="Window controls">
     <button type="button" aria-label="Minimize window" title="Minimize" onclick="window.api?.minimizeWindow()">
       <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8"/></svg>
@@ -388,8 +650,8 @@ dialog { border: 0; }
 <div class="container">
   <div class="top">
     <div>
-      <h1>🧪 CSIR-NET Chemistry Tracker</h1>
-      <div class="sub">Native Application. Your progress saves automatically to your chosen CSV file.</div>
+      <h1>🧪 CSIR-NET Chemistry Tracker <span style="font-size: 13px; vertical-align: middle; background: var(--surface-soft); padding: 3px 8px; border-radius: 999px; font-weight: 600; color: var(--accent); letter-spacing: normal;">v2.0</span></h1>
+      <div class="sub">Your progress saves automatically on this device.</div>
     </div>
     <div class="actions">
       <button class="btn" id="exportBtn">Export CSV</button>
@@ -397,6 +659,7 @@ dialog { border: 0; }
       <button class="btn" id="changeSaveLocationBtn">Change Save Location</button>
       <button class="btn danger" id="resetBtn">Reset All Data</button>
     </div>
+    <input id="importCsvFile" type="file" accept=".csv,text/csv" hidden>
   </div>
 
   <div class="greeting" id="greeting" aria-live="polite"></div>
@@ -414,18 +677,28 @@ dialog { border: 0; }
 </div>
 
   <div class="stats">
-    <div class="stat"><small>Total Marks</small><strong id="totalMarks">321</strong></div>
-    <div class="stat"><small>Covered Marks</small><strong id="covered">0</strong></div>
-    <div class="stat"><small>Remaining Marks</small><strong id="remaining">321</strong></div>
-    <div class="stat"><small>Completed Topics</small><strong id="completed">0</strong></div>
-    <div class="stat"><small>Doing Now</small><strong id="doing">0</strong></div>
-    <div class="stat"><small>Excluded Topics</small><strong id="excluded">0</strong></div>
+    <div class="stat" data-topic-list="all" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show all topics"><small>Total Marks</small><strong id="totalMarks">321</strong></div>
+    <div class="stat" data-topic-list="completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show completed topics"><small>Covered Marks</small><strong id="covered">0</strong></div>
+    <div class="stat" data-topic-list="remaining" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show remaining and in-progress topics"><small>Remaining Marks</small><strong id="remaining">321</strong></div>
+    <div class="stat" data-topic-list="completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show completed topics"><small>Completed Topics</small><strong id="completed">0</strong></div>
+    <div class="stat" data-topic-list="doing" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics in progress"><small>Doing Now</small><strong id="doing">0</strong></div>
+    <div class="stat" data-topic-list="skip" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show excluded topics"><small>Excluded Topics</small><strong id="excluded">0</strong></div>
+    <div class="stat" data-topic-list="lectures" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with remaining lectures"><small>Remaining Lectures</small><strong id="remainingLectures">0</strong></div>
+    <div class="stat clickable" id="lecturesPerDayCard" role="button" tabindex="0" title="Click to set lecture completion target date">
+      <small>Lectures / Day</small>
+      <strong id="lecturesPerDay">0</strong>
+      <div class="stat-target" id="lectureTargetDisplay">Target: ... ✎</div>
+    </div>
+    <div class="stat" data-topic-list="pyq" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with PYQ remaining"><small>Remaining PYQ</small><strong id="remainingPyq">0</strong></div>
+    <div class="stat" data-topic-list="pyq-completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with completed PYQ"><small>Completed PYQ</small><strong id="completedPyq">0</strong></div>
+    <div class="stat" data-topic-list="revision" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with revision remaining"><small>Remaining Revision</small><strong id="remainingRevision">0</strong></div>
+    <div class="stat" data-topic-list="revision-completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with completed revision"><small>Completed Revision</small><strong id="completedRevision">0</strong></div>
   </div>
 
-  <div class="progress-card">
+  <div class="progress-card" data-topic-list="completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show covered topics">
     <div class="progress-head"><span>Overall Syllabus Coverage</span><strong id="pct">0%</strong></div>
     <div class="bar"><span id="bar" style="width:0%"></span></div>
-    <div class="sub" style="font-size:13px;margin-top:12px">Coverage uses Avg. Marks. Excluded Marks are marked "Don't want to do" and are not counted as covered. <br/> <strong id="excludedMarks">0</strong> marks currently excluded.</div>
+    <div class="sub" style="font-size:13px;margin-top:12px">Coverage uses Avg. Marks. Excluded topics are removed from the coverage calculation. <br/> <strong id="excludedMarks">0</strong> marks currently excluded.</div>
   </div>
 
   <div class="controls">
@@ -448,6 +721,7 @@ dialog { border: 0; }
   <form class="topic-form" id="topicForm">
     <input name="name" type="text" placeholder="New topic name" aria-label="New topic name" maxlength="160" required>
     <input name="marks" type="number" placeholder="Marks" aria-label="Topic marks" min="0.1" step="any" required>
+    <input name="lectures" type="number" placeholder="Lectures" aria-label="Topic lectures" min="0" step="1">
     <select name="category" aria-label="Topic category">
       <option value="bumper">Bumper</option>
       <option value="major">Major</option>
@@ -461,6 +735,7 @@ dialog { border: 0; }
       <h2>Edit topic</h2>
       <label>Topic name<input name="name" type="text" maxlength="160" required></label>
       <label>Marks<input name="marks" type="number" min="0.1" step="any" required></label>
+      <label>Remaining Lectures<input name="lectures" type="number" min="0" step="1"></label>
       <label>Category
         <select name="category">
           <option value="bumper">Bumper</option>
@@ -499,6 +774,33 @@ dialog { border: 0; }
     </form>
   </dialog>
 
+  <dialog id="lectureTargetDialog">
+    <form class="edit-form" id="lectureTargetForm">
+      <h2>🎯 Lecture Target Date</h2>
+      <p style="margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.5;">
+        Set your target completion date for all remaining lectures. Daily lecture pace will be calculated based on this date.
+      </p>
+      <label for="lectureTargetInput">Target completion date
+        <input id="lectureTargetInput" name="lectureTargetDate" type="date" required>
+      </label>
+      <div id="lectureTargetDaysLeft" style="font-size: 13px; font-weight: 600; color: var(--accent);"></div>
+      <div class="edit-form-actions">
+        <button class="btn" id="cancelLectureTarget" type="button">Cancel</button>
+        <button class="btn" type="submit">Save target date</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="remainingTopicsDialog" class="topic-list-dialog" aria-labelledby="remainingTopicsTitle">
+    <div class="edit-form">
+      <h2 id="remainingTopicsTitle">Topics remaining</h2>
+      <ul class="topic-list" id="remainingTopicsList"></ul>
+      <div class="edit-form-actions">
+        <button class="btn" id="closeRemainingTopics" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
   <main id="topics"></main>
 </div>
 
@@ -510,6 +812,7 @@ dialog { border: 0; }
 <script>
 const themeButtons = document.querySelectorAll("[data-theme-choice]");
 const setTheme = theme => {
+  if (!["light", "dark"].includes(theme)) return;
   document.documentElement.dataset.theme = theme;
   themeButtons.forEach(button => {
     button.setAttribute("aria-pressed", String(button.dataset.themeChoice === theme));
@@ -523,7 +826,7 @@ const setTheme = theme => {
 themeButtons.forEach(button => {
   button.addEventListener("click", () => setTheme(button.dataset.themeChoice));
 });
-setTheme(document.documentElement.dataset.theme);
+setTheme(document.documentElement.dataset.theme || "light");
 
 let TOPICS = [
 ["bumper","Chemistry of Transition metal & Inner Transition Elements",32],
@@ -567,9 +870,17 @@ let TOPICS = [
 let state={};
 let username="";
 let deadline="2026-12-19";
+let lectureDeadline="";
+
+const fmtDate=dateStr=>{
+  if(!validDeadline(dateStr))return dateStr||"Not set";
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const dt=new Date(y,m-1,d);
+  return dt.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+};
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const get=t=>state[t.id]||{status:"remaining",pyq:false,revision:false,test:false};
+const get=t=>Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0}, state[t.id]||{});
 const validTopicId=id=>typeof id==="string"&&/^[a-zA-Z0-9_-]+$/.test(id)&&!Object.hasOwn(Object.prototype,id);
 const validDeadline=value=>{
   if(typeof value!=="string"||! /^\d{4}-\d{2}-\d{2}$/.test(value))return false;
@@ -711,11 +1022,37 @@ const QUOTES = [
 const selectedQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 document.getElementById("dailyQuote").innerHTML = `${selectedQuote.text}<br><span style="display:block; margin-top:8px; font-size:13px; font-style:normal; color:#94a3b8; font-weight:500;">— ${selectedQuote.author}</span>`;
 
-// BACKGROUND DESKTOP SAVE LOGIC
+const desktopApi = window.api;
+if (!desktopApi) {
+  document.querySelector(".window-bar").hidden = true;
+  document.getElementById("changeSaveLocationBtn").hidden = true;
+}
+
+const androidFilesReady = !desktopApi && window.Capacitor
+  ? new Promise((resolve, reject) => {
+      const bridge = document.createElement("script");
+      bridge.src = "android-file-bridge.js";
+      bridge.onload = () => resolve(window.csirTrackerAndroidFiles);
+      bridge.onerror = () => reject(new Error("Could not load Android file sharing."));
+      document.head.append(bridge);
+    })
+  : Promise.resolve(null);
+
+const loadTrackerData = async () => {
+  if (desktopApi) return desktopApi.loadData();
+  const savedData = localStorage.getItem("csir-tracker-data");
+  return savedData ? JSON.parse(savedData) : {};
+};
+
+const saveTrackerData = async data => {
+  if (desktopApi) return desktopApi.saveData(data);
+  localStorage.setItem("csir-tracker-data", JSON.stringify(data));
+};
+
 const save = async () => {
   render();
   try {
-    await window.api.saveData({ topics: TOPICS, progress: state, username, deadline });
+    await saveTrackerData({ topics: TOPICS, progress: state, username, deadline, lectureDeadline });
     return true;
   } catch (error) {
     console.error("Failed to save progress:", error);
@@ -724,23 +1061,50 @@ const save = async () => {
   }
 };
 
-const CSV_HEADERS = ["id", "topic", "category", "marks", "status", "pyq", "revision", "test", "note"];
-const REQUIRED_CSV_HEADERS = CSV_HEADERS.filter(header => header !== "note");
+const CSV_HEADERS = ["id", "topic", "category", "marks", "status", "lectures", "pyq", "revision", "test", "note"];
+const REQUIRED_CSV_HEADERS = CSV_HEADERS.filter(header => header !== "note" && header !== "lectures");
 const csvCell = value => `"${String(value).replace(/"/g, '""')}"`;
 
 const exportCsv = async () => {
   const rows = [CSV_HEADERS, ...TOPICS.map(topic => {
     const progress = get(topic);
+    const lectures = progress.lectures !== undefined && Number.isFinite(Number(progress.lectures))
+      ? Math.max(0, Math.floor(Number(progress.lectures)))
+      : 0;
     return [
       topic.id, topic.name, topic.cat, topic.marks, progress.status,
+      lectures,
       progress.pyq, progress.revision, progress.test, progress.note || ""
     ];
   })];
   const csv = rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
 
   try {
-    const exported = await window.api.exportCsv(csv);
-    if (exported) alert("Progress exported successfully.");
+    if (desktopApi) {
+      const exported = await desktopApi.exportCsv(csv);
+      if (exported) alert("Progress exported successfully.");
+      return;
+    }
+
+    const androidFiles = await androidFilesReady;
+    if (androidFiles) {
+      await androidFiles.exportCsv(csv);
+      alert("Progress exported successfully.");
+      return;
+    }
+
+    const file = new File([csv], "csir_progress.csv", { type: "text/csv" });
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: "CSIR Tracker progress" });
+    } else {
+      const url = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file.name;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    alert("Progress exported successfully.");
   } catch (error) {
     console.error("Failed to export CSV:", error);
     alert(`Could not export CSV: ${error.message}`);
@@ -793,9 +1157,11 @@ const parseCsv = text => {
   return rows.filter(csvRow => csvRow.some(value => value.length));
 };
 
-const importCsv = async () => {
+const importCsv = async file => {
   try {
-    const csv = await window.api.importCsv();
+    const csv = desktopApi
+      ? await desktopApi.importCsv()
+      : file ? await file.text() : null;
     if (csv === null) return;
 
     const [headers, ...parsedRows] = parseCsv(csv);
@@ -848,6 +1214,7 @@ const importCsv = async () => {
 
       imported[id] = {
         status: value("status"),
+        lectures: column.lectures !== undefined ? Math.max(0, parseInt(value("lectures"), 10) || 0) : 0,
         pyq: parseBoolean("pyq"),
         revision: parseBoolean("revision"),
         test: parseBoolean("test"),
@@ -904,12 +1271,18 @@ const importCsv = async () => {
 
 const loadData = async () => {
   try {
-    const data = await window.api.loadData();
+    const data = await loadTrackerData();
     if (data && typeof data.username === "string") username = data.username.trim();
     if (data && Object.hasOwn(data, "deadline")) {
       if (data.deadline !== "") {
         if (!validDeadline(data.deadline)) throw new Error("Saved deadline is invalid.");
         deadline = data.deadline;
+      }
+    }
+    if (data && Object.hasOwn(data, "lectureDeadline")) {
+      if (data.lectureDeadline !== "") {
+        if (!validDeadline(data.lectureDeadline)) throw new Error("Saved lecture target deadline is invalid.");
+        lectureDeadline = data.lectureDeadline;
       }
     }
     if (data && (Object.hasOwn(data, "topics") || Object.hasOwn(data, "progress"))) {
@@ -976,6 +1349,10 @@ function render(){
       <div class="section-body">
       ${arr.map(t=>{
         const s=get(t);
+        const isInactive = s.status === "completed" || s.status === "skip";
+        const lectures = s.lectures !== undefined && Number.isFinite(Number(s.lectures))
+          ? Math.max(0, Math.floor(Number(s.lectures)))
+          : 0;
         return `<article class="topic ${s.status}">
           <div class="topic-main">
             <div>
@@ -984,6 +1361,14 @@ function render(){
                 <label><input type="checkbox" data-id="${t.id}" data-field="pyq" ${s.pyq?"checked":""}> PYQ</label>
                 <label><input type="checkbox" data-id="${t.id}" data-field="revision" ${s.revision?"checked":""}> Revision</label>
                 <label><input type="checkbox" data-id="${t.id}" data-field="test" ${s.test?"checked":""}> Unit Test</label>
+                ${!isInactive ? `<div class="lecture-tracker" title="Remaining lectures to watch for this topic">
+                  <span class="lecture-label">📺 Lectures:</span>
+                  <div class="lecture-stepper">
+                    <button class="lecture-btn minus" type="button" data-id="${t.id}" ${lectures <= 0 ? "disabled" : ""} aria-label="Decrease remaining lectures" title="Decrease remaining lectures">−</button>
+                    <input class="lecture-input" type="number" data-id="${t.id}" min="0" max="999" step="1" value="${lectures}" aria-label="Remaining lectures count" title="Remaining lectures">
+                    <button class="lecture-btn plus" type="button" data-id="${t.id}" aria-label="Increase remaining lectures" title="Increase remaining lectures">+</button>
+                  </div>
+                </div>` : ""}
                 ${s.status==="completed"?'<span class="done-note">✓ Completed</span>':""}
                 ${s.status==="skip"?'<span class="done-note" style="color:var(--danger)">⊘ Excluded</span>':""}
               </div>
@@ -1021,6 +1406,121 @@ function render(){
   updateStats();
 }
 
+function getRemainingTopics(field) {
+  return TOPICS.filter(topic => {
+    const progress = get(topic);
+    return progress.status !== "skip" && !progress[field];
+  });
+}
+
+const topicListFilters = {
+  all: { title: "All Topics", filter: () => true },
+  completed: { title: "Completed Topics", filter: topic => get(topic).status === "completed" },
+  remaining: {
+    title: "Remaining and In Progress",
+    filter: topic => ["remaining", "doing"].includes(get(topic).status)
+  },
+  doing: { title: "In Progress", filter: topic => get(topic).status === "doing" },
+  skip: { title: "Excluded Topics", filter: topic => get(topic).status === "skip" },
+  lectures: {
+    title: "Topics with Remaining Lectures",
+    filter: topic => {
+      const progress = get(topic);
+      return progress.status !== "completed" && progress.status !== "skip" && Number(progress.lectures) > 0;
+    }
+  },
+  pyq: { title: "Remaining PYQ", filter: topic => get(topic).status !== "skip" && !get(topic).pyq },
+  "pyq-completed": { title: "Completed PYQ", filter: topic => get(topic).status !== "skip" && get(topic).pyq },
+  revision: { title: "Remaining Revision", filter: topic => get(topic).status !== "skip" && !get(topic).revision },
+  "revision-completed": { title: "Completed Revision", filter: topic => get(topic).status !== "skip" && get(topic).revision }
+};
+const topicDialog = document.getElementById("remainingTopicsDialog");
+let topicDialogAnimation = null;
+let topicDialogClosing = false;
+let topicDialogOrigin = null;
+
+function getTopicDialogKeyframes() {
+  const dialogRect = topicDialog.getBoundingClientRect();
+  const { left, top, width, height } = topicDialogOrigin;
+  const scaleX = Math.max(0.05, width / dialogRect.width);
+  const scaleY = Math.max(0.05, height / dialogRect.height);
+  const translateX = left + width / 2 - (dialogRect.left + dialogRect.width / 2);
+  const translateY = top + height / 2 - (dialogRect.top + dialogRect.height / 2);
+  return [
+    { opacity: 0.4, transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})` },
+    { opacity: 1, transform: "translate(0, 0) scale(1, 1)" }
+  ];
+}
+
+function animateTopicDialog(opening) {
+  if (topicDialogAnimation) {
+    topicDialogAnimation.cancel();
+    topicDialogAnimation = null;
+  }
+  const keyframes = getTopicDialogKeyframes();
+  const animation = topicDialog.animate(opening ? keyframes : keyframes.slice().reverse(), {
+    duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 340,
+    easing: opening ? "cubic-bezier(0.2, 0.8, 0.2, 1)" : "cubic-bezier(0.4, 0, 1, 1)",
+    fill: "both"
+  });
+  topicDialogAnimation = animation;
+  animation.onfinish = () => {
+    animation.cancel();
+    if (topicDialogAnimation === animation) topicDialogAnimation = null;
+    if (!opening && topicDialog.open) topicDialog.close();
+  };
+}
+
+function closeTopicDialog() {
+  if (!topicDialog.open || topicDialogClosing) return;
+  topicDialogClosing = true;
+  animateTopicDialog(false);
+}
+
+function openTopicList(filterName, sourceCard) {
+  const config = topicListFilters[filterName];
+  if (!config || topicDialog.open) return;
+  const topics = TOPICS.filter(config.filter);
+  const list = document.getElementById("remainingTopicsList");
+  const categoryLabels = { bumper: "Bumper", major: "Major", minor: "Minor" };
+  const statusLabels = { remaining: "Remaining", doing: "In progress", completed: "Completed", skip: "Excluded" };
+  document.getElementById("remainingTopicsTitle").textContent = `${config.title} · ${topics.length}`;
+  list.innerHTML = topics.length
+    ? topics.map(topic => {
+      const progress = get(topic);
+      return `<li><span class="topic-list-name">${esc(topic.name)}</span><span class="topic-list-meta">${fmt(topic.marks)} marks · ${categoryLabels[topic.cat]} · ${statusLabels[progress.status]}</span></li>`;
+    }).join("")
+    : '<li class="topic-list-empty">There are no topics in this list yet.</li>';
+  topicDialogOrigin = sourceCard.getBoundingClientRect();
+  topicDialog.showModal();
+  topicDialogClosing = false;
+  animateTopicDialog(true);
+}
+
+document.querySelectorAll("[data-topic-list]").forEach(card => {
+  const openList = () => openTopicList(card.dataset.topicList, card);
+  card.addEventListener("click", openList);
+  card.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openList();
+    }
+  });
+});
+
+topicDialog.addEventListener("click", event => {
+  if (event.target === topicDialog) closeTopicDialog();
+});
+topicDialog.addEventListener("cancel", event => {
+  event.preventDefault();
+  closeTopicDialog();
+});
+topicDialog.addEventListener("close", () => {
+  topicDialogClosing = false;
+  topicDialogOrigin = null;
+});
+document.getElementById("closeRemainingTopics").addEventListener("click", closeTopicDialog);
+
 function updateStats(){
   const total=TOPICS.reduce((a,t)=>a+t.marks,0);
   document.getElementById("totalMarks").textContent=fmt(total);
@@ -1030,7 +1530,8 @@ function updateStats(){
   const covered=completed.reduce((a,t)=>a+t.marks,0);
   const excluded=skipped.reduce((a,t)=>a+t.marks,0);
   const remaining=total-covered-excluded;
-  const pct=total?covered/total*100:0;
+  const eligibleTotal=TOPICS.filter(t=>get(t).status!=="skip").reduce((sum,t)=>sum+t.marks,0);
+  const pct=eligibleTotal?covered/eligibleTotal*100:0;
 let dataMsg = "";
   if (pct === 0) dataMsg = "Every grand journey begins with a single step. Claim your first topic today.";
   else if (pct < 25) dataMsg = `You've locked in ${pct.toFixed(1)}% of the syllabus. The momentum is building. Keep pushing!`;
@@ -1048,6 +1549,59 @@ let dataMsg = "";
   document.getElementById("excludedMarks").textContent=fmt(excluded);
   document.getElementById("pct").textContent=pct.toFixed(1)+"%";
   document.getElementById("bar").style.width=Math.min(100,pct)+"%";
+  const remPyq = getRemainingTopics("pyq").length;
+  const remRev = getRemainingTopics("revision").length;
+  const completedPyq = TOPICS.filter(t => get(t).status !== "skip" && get(t).pyq).length;
+  const completedRevision = TOPICS.filter(t => get(t).status !== "skip" && get(t).revision).length;
+  const remPyqEl = document.getElementById("remainingPyq");
+  const remRevEl = document.getElementById("remainingRevision");
+  const completedPyqEl = document.getElementById("completedPyq");
+  const completedRevisionEl = document.getElementById("completedRevision");
+  if (remPyqEl) remPyqEl.textContent = remPyq;
+  if (remRevEl) remRevEl.textContent = remRev;
+  if (completedPyqEl) completedPyqEl.textContent = completedPyq;
+  if (completedRevisionEl) completedRevisionEl.textContent = completedRevision;
+
+  updateLectureStats();
+}
+
+function getDaysUntilTarget(targetStr) {
+  if (!validDeadline(targetStr)) return 0;
+  const [year, month, day] = targetStr.split("-").map(Number);
+  const targetDate = new Date(year, month - 1, day).getTime();
+  const now = new Date().getTime();
+  const distance = targetDate - now;
+  if (distance <= 0) return 0;
+  return Math.max(1, Math.ceil(distance / (1000 * 60 * 60 * 24)));
+}
+
+function updateLectureStats() {
+  const remLecturesEl = document.getElementById("remainingLectures");
+  const perDayEl = document.getElementById("lecturesPerDay");
+  const targetDisplayEl = document.getElementById("lectureTargetDisplay");
+  if (!remLecturesEl || !perDayEl) return;
+
+  const activeTopics = TOPICS.filter(t => {
+    const s = get(t);
+    return s.status !== "completed" && s.status !== "skip";
+  });
+  const remLectures = activeTopics.reduce((sum, t) => sum + (Math.max(0, parseInt(get(t).lectures, 10) || 0)), 0);
+  remLecturesEl.textContent = remLectures;
+
+  const effectiveTarget = lectureDeadline && validDeadline(lectureDeadline) ? lectureDeadline : deadline;
+  if (targetDisplayEl) {
+    targetDisplayEl.textContent = `Target: ${fmtDate(effectiveTarget)} ✎`;
+  }
+
+  const daysLeft = getDaysUntilTarget(effectiveTarget);
+  if (remLectures === 0) {
+    perDayEl.textContent = "0";
+  } else if (daysLeft <= 0) {
+    perDayEl.textContent = "—";
+  } else {
+    const perDay = remLectures / daysLeft;
+    perDayEl.textContent = perDay < 0.1 ? "<0.1" : (Number.isInteger(perDay) ? String(perDay) : perDay.toFixed(1));
+  }
 }
 
 function celebrateCompletion(x, y) {
@@ -1056,8 +1610,8 @@ function celebrateCompletion(x, y) {
   const burst = document.createElement("div");
   burst.className = "celebration-burst";
   burst.setAttribute("aria-hidden", "true");
-  burst.style.left = `${x}px`;
-  burst.style.top = `${y}px`;
+  burst.style.left = `${Number.isFinite(x) && x > 0 ? x : window.innerWidth / 2}px`;
+  burst.style.top = `${Number.isFinite(y) && y > 0 ? y : window.innerHeight / 2}px`;
   const colors = ["#f97316", "#eab308", "#22c55e", "#3b82f6", "#a855f7", "#ec4899"];
 
   for (let i = 0; i < 28; i++) {
@@ -1080,8 +1634,19 @@ document.addEventListener("change",e=>{
  if(el.type === "checkbox") {
    const id=el.dataset.id, field=el.dataset.field;
    if(!id||!field)return;
-   state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false},state[id]||{});
+   state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0},state[id]||{});
    state[id][field]=el.checked;
+   save();
+ }
+ if(el.classList.contains("lecture-input")) {
+   const id=el.dataset.id;
+   const topic = TOPICS.find(item => item.id === id);
+   if (!topic) return;
+   const s = get(topic);
+   if (s.status === "completed" || s.status === "skip") return;
+   const val = Math.max(0, parseInt(el.value, 10) || 0);
+   state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0},state[id]||{});
+   state[id].lectures = val;
    save();
  }
 });
@@ -1091,6 +1656,29 @@ document.addEventListener("click", e=>{
   if (!(target instanceof Element)) return;
   const el = target.closest("button");
   if (!el) return;
+  if(el.classList.contains("lecture-btn")) {
+    const id = el.dataset.id;
+    const topic = TOPICS.find(item => item.id === id);
+    if (!topic) return;
+    const s = get(topic);
+    if (s.status === "completed" || s.status === "skip") return;
+    const currentLectures = Math.max(0, parseInt(s.lectures, 10) || 0);
+    state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0}, state[id]||{});
+    if (el.classList.contains("minus")) {
+      if (currentLectures <= 0) return;
+      const newLectures = currentLectures - 1;
+      state[id].lectures = newLectures;
+      if (newLectures === 0) {
+        state[id].status = "completed";
+        celebrateCompletion(e.clientX, e.clientY);
+      }
+      save();
+    } else if (el.classList.contains("plus")) {
+      state[id].lectures = currentLectures + 1;
+      save();
+    }
+    return;
+  }
   if(el.classList.contains("note-topic-btn")) {
     const topic = TOPICS.find(item => item.id === el.dataset.id);
     if (!topic) return;
@@ -1108,6 +1696,7 @@ document.addEventListener("click", e=>{
     const form = document.getElementById("editTopicForm");
     form.elements.name.value = topic.name;
     form.elements.marks.value = topic.marks;
+    form.elements.lectures.value = get(topic).lectures ?? 0;
     form.elements.category.value = topic.cat;
     form.dataset.topicId = topic.id;
     document.getElementById("editTopicDialog").showModal();
@@ -1136,7 +1725,7 @@ document.addEventListener("click", e=>{
     const field = el.dataset.field;
     const val = el.dataset.value;
     if(!id || !field) return;
-    state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false}, state[id]||{});
+    state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0}, state[id]||{});
     const previousStatus = state[id][field];
     state[id][field] = val;
     save().then(saved => {
@@ -1152,6 +1741,69 @@ document.getElementById("cancelEditTopic").addEventListener("click", () => {
 });
 document.getElementById("cancelTopicNote").addEventListener("click", () => {
   document.getElementById("topicNoteDialog").close();
+});
+document.getElementById("cancelLectureTarget").addEventListener("click", () => {
+  document.getElementById("lectureTargetDialog").close();
+});
+
+function updateTargetDaysPreview(dateVal) {
+  const preview = document.getElementById("lectureTargetDaysLeft");
+  if (!preview) return;
+  if (!validDeadline(dateVal)) {
+    preview.textContent = "Choose a valid date.";
+    preview.style.color = "var(--danger)";
+    return;
+  }
+  const days = getDaysUntilTarget(dateVal);
+  if (days <= 0) {
+    preview.textContent = "⚠️ Target date is today or has already passed.";
+    preview.style.color = "var(--danger)";
+  } else {
+    preview.textContent = `⏳ ${days} day${days === 1 ? "" : "s"} remaining to target`;
+    preview.style.color = "var(--accent)";
+  }
+}
+
+const lecturesPerDayCard = document.getElementById("lecturesPerDayCard");
+if (lecturesPerDayCard) {
+  const openLectureTargetModal = () => {
+    const effectiveTarget = lectureDeadline && validDeadline(lectureDeadline) ? lectureDeadline : deadline;
+    const input = document.getElementById("lectureTargetInput");
+    input.value = effectiveTarget;
+    updateTargetDaysPreview(effectiveTarget);
+    document.getElementById("lectureTargetDialog").showModal();
+    input.focus();
+  };
+  lecturesPerDayCard.addEventListener("click", openLectureTargetModal);
+  lecturesPerDayCard.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openLectureTargetModal();
+    }
+  });
+}
+
+document.getElementById("lectureTargetInput").addEventListener("input", event => {
+  updateTargetDaysPreview(event.currentTarget.value);
+});
+
+document.getElementById("lectureTargetForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const targetVal = form.elements.lectureTargetDate.value;
+  if (!validDeadline(targetVal)) {
+    alert("Please choose a valid target date.");
+    return;
+  }
+  const previousTarget = lectureDeadline;
+  lectureDeadline = targetVal;
+  if (await save()) {
+    updateLectureStats();
+    document.getElementById("lectureTargetDialog").close();
+  } else {
+    lectureDeadline = previousTarget;
+    updateLectureStats();
+  }
 });
 document.getElementById("topicNoteForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1204,21 +1856,25 @@ document.getElementById("editTopicForm").addEventListener("submit", async event 
   const topicId = form.dataset.topicId;
   const name = form.elements.name.value.trim();
   const marks = Number(form.elements.marks.value);
+  const lectures = Math.max(0, parseInt(form.elements.lectures?.value, 10) || 0);
   const cat = form.elements.category.value;
-  if (!name || name.length > 160 || !Number.isFinite(marks) || marks <= 0 ||
-      !["bumper", "major", "minor"].includes(cat)) {
-    alert("Enter a topic name, positive marks, and a valid category.");
+  if (!name || name.length > 160 || !Number.isFinite(marks) || marks <= 0) {
+    alert("Enter a topic name and positive marks.");
     return;
   }
 
   const previousTopics = TOPICS;
+  const previousState = state;
   TOPICS = TOPICS.map(topic => topic.id === topicId
     ? { ...topic, name, marks, cat }
     : topic);
+  state = { ...state };
+  state[topicId] = Object.assign({ status: "remaining", pyq: false, revision: false, test: false, lectures: 0 }, state[topicId] || {}, { lectures });
   if (await save()) {
     document.getElementById("editTopicDialog").close();
   } else {
     TOPICS = previousTopics;
+    state = previousState;
     render();
   }
 });
@@ -1232,11 +1888,20 @@ document.getElementById("resetBtn").addEventListener("click",()=>{
  }
 });
 document.getElementById("exportBtn").addEventListener("click", exportCsv);
-document.getElementById("importBtn").addEventListener("click", importCsv);
+document.getElementById("importBtn").addEventListener("click", () => {
+  if (desktopApi) importCsv();
+  else document.getElementById("importCsvFile").click();
+});
+document.getElementById("importCsvFile").addEventListener("change", event => {
+  const [file] = event.currentTarget.files;
+  if (file) importCsv(file);
+  event.currentTarget.value = "";
+});
 document.getElementById("changeSaveLocationBtn").addEventListener("click", async () => {
+  if (!desktopApi) return;
   try {
-    const selectedPath = await window.api.chooseDataLocation({
-      topics: TOPICS, progress: state, username, deadline
+    const selectedPath = await desktopApi.chooseDataLocation({
+      topics: TOPICS, progress: state, username, deadline, lectureDeadline
     });
     if (selectedPath) alert(`Tracker data will now be saved to:\n${selectedPath}`);
   } catch (error) {
@@ -1265,6 +1930,7 @@ document.getElementById("topicForm").addEventListener("submit", async event => {
   const form = event.currentTarget;
   const name = form.elements.name.value.trim();
   const marks = Number(form.elements.marks.value);
+  const lectures = Math.max(0, parseInt(form.elements.lectures?.value, 10) || 0);
   const cat = form.elements.category.value;
   if (!name || name.length > 160 || !Number.isFinite(marks) || marks <= 0) {
     alert("Enter a topic name and positive marks.");
@@ -1273,9 +1939,15 @@ document.getElementById("topicForm").addEventListener("submit", async event => {
 
   const topic = { id: `custom-${crypto.randomUUID()}`, name, cat, marks };
   const previousTopics = TOPICS;
+  const previousState = state;
   TOPICS = [...TOPICS, topic];
+  state = { ...state };
+  state[topic.id] = { status: "remaining", pyq: false, revision: false, test: false, lectures };
   if (await save()) form.reset();
-  else TOPICS = previousTopics;
+  else {
+    TOPICS = previousTopics;
+    state = previousState;
+  }
   render();
 });
 
@@ -1288,6 +1960,7 @@ function updateCountdown() {
 
   if (distance <= 0) {
     document.getElementById("countdownTimer").textContent = "🚀 Deadline reached!";
+    updateLectureStats();
     return;
   }
 
@@ -1298,6 +1971,7 @@ function updateCountdown() {
 
   document.getElementById("countdownTimer").textContent =
     `⏳ ${days}d ${hours}h ${mins}m ${seconds}s left`;
+  updateLectureStats();
 }
 
 updateCountdown();

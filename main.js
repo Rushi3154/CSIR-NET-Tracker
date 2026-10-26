@@ -11,9 +11,11 @@ let saveFilePath = defaultSaveFilePath;
 
 const STORAGE_HEADERS = [
   'record_type', 'id', 'topic', 'category', 'marks', 'status',
-  'pyq', 'revision', 'test', 'username', 'deadline', 'note'
+  'lectures', 'pyq', 'revision', 'test', 'username', 'deadline', 'lecture_deadline', 'note'
 ];
-const REQUIRED_STORAGE_HEADERS = STORAGE_HEADERS.filter(header => header !== 'note');
+const REQUIRED_STORAGE_HEADERS = STORAGE_HEADERS.filter(
+  header => header !== 'note' && header !== 'lectures' && header !== 'lecture_deadline'
+);
 
 function csvCell(value) {
   return `"${String(value ?? '').replace(/"/g, '""')}"`;
@@ -21,15 +23,20 @@ function csvCell(value) {
 
 function dataToCsv(data) {
   const rows = [STORAGE_HEADERS, [
-    'metadata', '', '', '', '', '', '', '', '', data.username || '', data.deadline || '', ''
+    'metadata', '', '', '', '', '', '', '', '', '', data.username || '', data.deadline || '', data.lectureDeadline || '', ''
   ]];
 
   for (const topic of data.topics || []) {
     const progress = data.progress && data.progress[topic.id] || {};
+    const lectures = progress.lectures !== undefined && Number.isFinite(Number(progress.lectures))
+      ? Math.max(0, Math.floor(Number(progress.lectures)))
+      : 0;
     rows.push([
       'topic', topic.id, topic.name, topic.cat, topic.marks,
-      progress.status || 'remaining', Boolean(progress.pyq),
-      Boolean(progress.revision), Boolean(progress.test), '', '', progress.note || ''
+      progress.status || 'remaining',
+      lectures,
+      Boolean(progress.pyq),
+      Boolean(progress.revision), Boolean(progress.test), '', '', '', progress.note || ''
     ]);
   }
 
@@ -107,6 +114,10 @@ function dataFromCsv(text) {
       data.username = value('username');
       const deadline = value('deadline');
       if (deadline) data.deadline = deadline;
+      if (columns.lecture_deadline !== undefined) {
+        const lectureDeadline = value('lecture_deadline');
+        if (lectureDeadline) data.lectureDeadline = lectureDeadline;
+      }
     } else if (value('record_type') === 'topic') {
       const id = value('id');
       data.topics.push({
@@ -117,6 +128,7 @@ function dataFromCsv(text) {
       });
       data.progress[id] = {
         status: value('status'),
+        lectures: columns.lectures !== undefined ? Math.max(0, parseInt(value('lectures'), 10) || 0) : 0,
         pyq: value('pyq') === 'true',
         revision: value('revision') === 'true',
         test: value('test') === 'true',
