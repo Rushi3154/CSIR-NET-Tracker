@@ -114,7 +114,7 @@ dialog::backdrop { background: rgb(15 23 42 / 0.45); }
 .collapsible.closed .section-body { display: none; }
 .section-body { padding-top: 12px; }
 
-.topic { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; margin: 12px 0; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s; }
+.topic { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; margin: 12px 0; box-shadow: var(--shadow-sm); transition: background-color 0.18s ease, box-shadow 0.18s ease; }
 .topic:hover { transform: translateX(4px); box-shadow: var(--shadow); }
 .topic.completed { border-left: 6px solid var(--accent2); }
 .topic.doing { border-left: 6px solid var(--doing); }
@@ -126,8 +126,11 @@ dialog::backdrop { background: rgb(15 23 42 / 0.45); }
 
 .topic-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; }
 .topic-main > div:first-child { min-width: 0; }
-.name { font-weight: 600; font-size: 16px; color: #111827; }
+.name { font-weight: 600; font-size: 16px; color: #111827; text-align: left; }
 .marks { font-weight: 700; white-space: nowrap; background: #f3f4f6; padding: 8px 12px; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
+.inline-edit-trigger { border: 0; background: transparent; cursor: pointer; font: inherit; }
+.inline-edit-trigger:hover { color: var(--accent); }
+.inline-edit-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .status-group { display: flex; background: #f9fafb; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 4px; }
 .status-btn { border: none; background: transparent; padding: 6px 12px; font-size: 13px; font-weight: 500; color: var(--muted); border-radius: 6px; cursor: pointer; }
@@ -233,6 +236,7 @@ dialog { background: var(--surface); color: var(--text); }
 }
 .deadline-input { background: var(--surface); border-color: var(--border); color: var(--text); }
 #countdownTimer { color: var(--danger) !important; background: rgb(184 95 86 / 0.1) !important; }
+.deadline-countdown { font-weight: 700; color: var(--danger); background: rgb(184 95 86 / 0.1); padding: 4px 12px; border-radius: 999px; }
 .marks { background: var(--surface-soft); color: var(--muted); }
 .status-group { background: var(--surface-soft); border-color: var(--border); border-radius: 999px; }
 .status-btn { border-radius: 999px; }
@@ -346,20 +350,6 @@ dialog { background: var(--surface); color: var(--text); }
 .stat.clickable:focus-visible {
   outline: 3px solid rgb(76 111 157 / 0.55);
   outline-offset: 3px;
-}
-.stat-target {
-  margin-top: 6px;
-  font-size: 11px;
-  color: var(--accent);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  opacity: 0.9;
-}
-.stat.clickable:hover .stat-target {
-  opacity: 1;
-  text-decoration: underline;
 }
 input[type="checkbox"] { accent-color: var(--accent); }
 :focus-visible { outline: 3px solid rgb(76 111 157 / 0.55); outline-offset: 3px; }
@@ -630,6 +620,89 @@ dialog { border: 0; }
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.14);
 }
 :root[data-theme="dark"] dialog::backdrop { background: rgb(8 12 19 / 0.58); }
+
+:root[data-theme="light"] .greeting,
+:root[data-theme="dark"] .greeting {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme="light"] .btn,
+:root[data-theme="light"] .stat,
+:root[data-theme="light"] .topic,
+:root[data-theme="light"] .progress-card,
+:root[data-theme="light"] .section-title,
+:root[data-theme="dark"] .btn,
+:root[data-theme="dark"] .stat,
+:root[data-theme="dark"] .topic,
+:root[data-theme="dark"] .progress-card,
+:root[data-theme="dark"] .section-title {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.btn:hover,
+.topic:hover,
+.stat:hover,
+.stat[role="button"]:hover,
+.stat.clickable:hover,
+.progress-card[data-topic-list]:hover,
+.lecture-btn:hover:not(:disabled),
+.lecture-btn:active:not(:disabled) {
+  transform: none;
+}
+.btn { transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
+.btn:hover { background: var(--surface-soft); color: var(--accent); box-shadow: var(--shadow); }
+.topic {
+  position: relative;
+  border-left: 0;
+  --topic-status-color: var(--accent);
+}
+.topic::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--topic-status-color);
+}
+.topic.completed { --topic-status-color: var(--accent2); }
+.topic.doing { --topic-status-color: var(--doing); }
+.topic.skip { --topic-status-color: var(--danger); }
+.topic:hover { background-color: var(--surface-soft); box-shadow: var(--shadow); }
+.stat[role="button"]:hover,
+.stat.clickable:hover,
+.progress-card[data-topic-list]:hover {
+  background-color: var(--surface-soft);
+  box-shadow: var(--shadow-lg);
+}
+.lecture-btn:hover:not(:disabled) { box-shadow: 0 0 0 3px var(--focus-ring); }
+.name.inline-edit-trigger { padding: 0; font-weight: 600; font-size: 16px; }
+.marks.inline-edit-trigger { font-weight: 700; font-size: 14px; }
+.name.inline-edit-trigger:hover,
+.marks.inline-edit-trigger:hover { color: var(--accent); }
+
+:root[data-theme="light"] .btn:hover,
+:root[data-theme="dark"] .btn:hover {
+  background-color: var(--surface-soft);
+  color: var(--accent);
+  box-shadow: var(--shadow);
+}
+:root[data-theme="light"] .topic:hover,
+:root[data-theme="dark"] .topic:hover,
+:root[data-theme="light"] .stat[role="button"]:hover,
+:root[data-theme="dark"] .stat[role="button"]:hover,
+:root[data-theme="light"] .progress-card[data-topic-list]:hover,
+:root[data-theme="dark"] .progress-card[data-topic-list]:hover,
+:root[data-theme="light"] .section-title:hover,
+:root[data-theme="dark"] .section-title:hover {
+  background-color: var(--surface-soft);
+  box-shadow: var(--shadow);
+}
+
 </style>
 </head>
 <body>
@@ -676,6 +749,13 @@ dialog { border: 0; }
   <div id="countdownTimer" style="font-weight: 700; color: #b91c1c; background: #fee2e2; padding: 4px 12px; border-radius: 999px;">⏳ Calculating...</div>
 </div>
 
+<div class="exam" style="justify-content: space-between;">
+  <label class="exam-date" for="lectureDeadlineInput">📚 <strong>Lecture Completion Deadline:</strong>
+    <input id="lectureDeadlineInput" class="deadline-input" type="date" required>
+  </label>
+  <div id="lectureCountdownTimer" class="deadline-countdown">⏳ Calculating...</div>
+</div>
+
   <div class="stats">
     <div class="stat" data-topic-list="all" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show all topics"><small>Total Marks</small><strong id="totalMarks">321</strong></div>
     <div class="stat" data-topic-list="completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show completed topics"><small>Covered Marks</small><strong id="covered">0</strong></div>
@@ -687,7 +767,6 @@ dialog { border: 0; }
     <div class="stat clickable" id="lecturesPerDayCard" role="button" tabindex="0" title="Click to set lecture completion target date">
       <small>Lectures / Day</small>
       <strong id="lecturesPerDay">0</strong>
-      <div class="stat-target" id="lectureTargetDisplay">Target: ... ✎</div>
     </div>
     <div class="stat" data-topic-list="pyq" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with PYQ remaining"><small>Remaining PYQ</small><strong id="remainingPyq">0</strong></div>
     <div class="stat" data-topic-list="pyq-completed" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show topics with completed PYQ"><small>Completed PYQ</small><strong id="completedPyq">0</strong></div>
@@ -890,12 +969,46 @@ const validDeadline=value=>{
 };
 const fmt=n=>Number.isInteger(n)?String(n):n.toFixed(1);
 const updateGreeting=()=>{
-  const hour=new Date().getHours();
-  const greeting=hour>=5&&hour<12?"Good morning":hour>=12&&hour<17?"Good afternoon":hour>=17&&hour<21?"Good evening":"Hi";
-  document.getElementById("greeting").textContent=username
-    ? `${greeting}, ${username}! Ready to make progress today?`
-    : `${greeting}! Ready to make progress today?`;
+  const now=new Date();
+  const hour=now.getHours();
+  const period=hour>=5&&hour<12?"morning":hour>=12&&hour<17?"afternoon":hour>=17&&hour<21?"evening":"night";
+  const name=username?`, ${username}`:"";
+  const messages={
+    morning:[
+      `Good morning${name}! Start fresh and make one topic count.`,
+      `Good morning${name}! A focused session today moves you closer to your goal.`,
+      `Good morning${name}! Pick a topic and build some momentum.`,
+      `Good morning${name}! Your next small step starts now.`,
+      `Good morning${name}! Make today a steady step forward.`
+    ],
+    afternoon:[
+      `Good afternoon${name}! Keep your progress moving, one topic at a time.`,
+      `Good afternoon${name}! Take a quick reset, then get back to your goal.`,
+      `Good afternoon${name}! A little focused practice goes a long way.`,
+      `Good afternoon${name}! You still have time to make today count.`,
+      `Good afternoon${name}! Choose your next task and keep going.`
+    ],
+    evening:[
+      `Good evening${name}! Finish the day with one satisfying bit of progress.`,
+      `Good evening${name}! A calm review now can make tomorrow easier.`,
+      `Good evening${name}! Keep it simple: one topic, one step forward.`,
+      `Good evening${name}! Give yourself credit for showing up today.`,
+      `Good evening${name}! A little consistency adds up.`
+    ],
+    night:[
+      `Hello${name}! A quiet moment is a good time for a gentle review.`,
+      `Hi${name}! Keep tonight light and let steady practice do its work.`,
+      `Hello${name}! One small review is enough to keep your rhythm.`,
+      `Hi${name}! Take it at your own pace; every step matters.`,
+      `Hello${name}! Make a little progress, then get some rest.`
+    ]
+  };
+  const dayNumber=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/86400000);
+  const message=messages[period][dayNumber%messages[period].length];
+  const greetingElement=document.getElementById("greeting");
+  if(greetingElement.textContent!==message) greetingElement.textContent=message;
 };
+updateGreeting();
 const sectionOpen={bumper:false,major:false,minor:false};
 const QUOTES = [
   // Marcus Aurelius & Stoic Philosophy
@@ -1254,12 +1367,14 @@ const importCsv = async file => {
       username = previousUsername;
       deadline = previousDeadline;
       document.getElementById("deadlineInput").value = deadline;
+      syncLectureDeadlineInput();
       updateGreeting();
       updateCountdown();
       render();
       return;
     }
     document.getElementById("deadlineInput").value = deadline;
+      syncLectureDeadlineInput();
     updateGreeting();
     updateCountdown();
     alert("Progress imported successfully.");
@@ -1307,6 +1422,7 @@ const loadData = async () => {
     }
     updateGreeting();
     document.getElementById("deadlineInput").value = deadline;
+      syncLectureDeadlineInput();
     updateCountdown();
     render();
     if (!username) document.getElementById("usernameDialog").showModal();
@@ -1315,6 +1431,7 @@ const loadData = async () => {
     alert(`Could not load saved progress: ${error.message}`);
     updateGreeting();
     document.getElementById("deadlineInput").value = deadline;
+      syncLectureDeadlineInput();
     updateCountdown();
     render();
   }
@@ -1356,7 +1473,7 @@ function render(){
         return `<article class="topic ${s.status}">
           <div class="topic-main">
             <div>
-              <div class="name">${esc(t.name)}</div>
+              <button class="name inline-edit-trigger" type="button" data-inline-edit="name" data-id="${esc(t.id)}" aria-label="Edit topic name: ${esc(t.name)}" title="Click to edit topic name">${esc(t.name)}</button>
               <div class="checks">
                 <label><input type="checkbox" data-id="${t.id}" data-field="pyq" ${s.pyq?"checked":""}> PYQ</label>
                 <label><input type="checkbox" data-id="${t.id}" data-field="revision" ${s.revision?"checked":""}> Revision</label>
@@ -1380,7 +1497,7 @@ function render(){
                 <button class="status-btn ${s.status==="completed"?"active":""}" data-id="${t.id}" data-field="status" data-value="completed">Completed</button>
                 <button class="status-btn ${s.status==="skip"?"active":""}" data-id="${t.id}" data-field="status" data-value="skip">Exclude</button>
               </div>
-              <span class="marks">${fmt(t.marks)} marks</span>
+              <button class="marks inline-edit-trigger" type="button" data-inline-edit="marks" data-id="${esc(t.id)}" aria-label="Edit marks for ${esc(t.name)}" title="Click to edit marks">${fmt(t.marks)} marks</button>
             </div>
           </div>
           <div class="topic-actions">
@@ -1578,7 +1695,6 @@ function getDaysUntilTarget(targetStr) {
 function updateLectureStats() {
   const remLecturesEl = document.getElementById("remainingLectures");
   const perDayEl = document.getElementById("lecturesPerDay");
-  const targetDisplayEl = document.getElementById("lectureTargetDisplay");
   if (!remLecturesEl || !perDayEl) return;
 
   const activeTopics = TOPICS.filter(t => {
@@ -1589,10 +1705,6 @@ function updateLectureStats() {
   remLecturesEl.textContent = remLectures;
 
   const effectiveTarget = lectureDeadline && validDeadline(lectureDeadline) ? lectureDeadline : deadline;
-  if (targetDisplayEl) {
-    targetDisplayEl.textContent = `Target: ${fmtDate(effectiveTarget)} ✎`;
-  }
-
   const daysLeft = getDaysUntilTarget(effectiveTarget);
   if (remLectures === 0) {
     perDayEl.textContent = "0";
@@ -1604,6 +1716,18 @@ function updateLectureStats() {
   }
 }
 
+function openTopicEditor(topic, focusField = "name") {
+  const form = document.getElementById("editTopicForm");
+  form.elements.name.value = topic.name;
+  form.elements.marks.value = topic.marks;
+  form.elements.lectures.value = get(topic).lectures ?? 0;
+  form.elements.category.value = topic.cat;
+  form.dataset.topicId = topic.id;
+  document.getElementById("editTopicDialog").showModal();
+  const input = form.elements[focusField];
+  input.focus();
+  input.select();
+}
 function celebrateCompletion(x, y) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -1654,6 +1778,12 @@ document.addEventListener("change",e=>{
 document.addEventListener("click", e=>{
   const target = e.target;
   if (!(target instanceof Element)) return;
+  const inlineEdit = target.closest("[data-inline-edit]");
+  if (inlineEdit) {
+    const topic = TOPICS.find(item => item.id === inlineEdit.dataset.id);
+    if (topic) openTopicEditor(topic, inlineEdit.dataset.inlineEdit);
+    return;
+  }
   const el = target.closest("button");
   if (!el) return;
   if(el.classList.contains("lecture-btn")) {
@@ -1797,14 +1927,17 @@ document.getElementById("lectureTargetForm").addEventListener("submit", async ev
   }
   const previousTarget = lectureDeadline;
   lectureDeadline = targetVal;
+  syncLectureDeadlineInput();
+  updateCountdown();
   if (await save()) {
-    updateLectureStats();
     document.getElementById("lectureTargetDialog").close();
   } else {
     lectureDeadline = previousTarget;
-    updateLectureStats();
+    syncLectureDeadlineInput();
+    updateCountdown();
   }
 });
+
 document.getElementById("topicNoteForm").addEventListener("submit", async event => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -1918,13 +2051,33 @@ document.getElementById("deadlineInput").addEventListener("change", async event 
   }
   const previousDeadline = deadline;
   deadline = input.value;
+  syncLectureDeadlineInput();
   updateCountdown();
   if (!await save()) {
     deadline = previousDeadline;
     input.value = deadline;
+    syncLectureDeadlineInput();
     updateCountdown();
   }
 });
+
+document.getElementById("lectureDeadlineInput").addEventListener("change", async event => {
+  const input = event.currentTarget;
+  if (!validDeadline(input.value)) {
+    alert("Choose a valid lecture completion deadline.");
+    syncLectureDeadlineInput();
+    return;
+  }
+  const previousDeadline = lectureDeadline;
+  lectureDeadline = input.value;
+  updateCountdown();
+  if (!await save()) {
+    lectureDeadline = previousDeadline;
+    syncLectureDeadlineInput();
+    updateCountdown();
+  }
+});
+
 document.getElementById("topicForm").addEventListener("submit", async event => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -1952,25 +2105,27 @@ document.getElementById("topicForm").addEventListener("submit", async event => {
 });
 
 // EXAM COUNTDOWN TIMER
-function updateCountdown() {
-  const [year, month, day] = deadline.split("-").map(Number);
-  const examDate = new Date(year, month - 1, day).getTime();
-  const now = new Date().getTime();
-  const distance = examDate - now;
+function syncLectureDeadlineInput() {
+  const input = document.getElementById("lectureDeadlineInput");
+  if (input) input.value = lectureDeadline || deadline;
+}
 
-  if (distance <= 0) {
-    document.getElementById("countdownTimer").textContent = "🚀 Deadline reached!";
-    updateLectureStats();
-    return;
-  }
+function formatDeadlineCountdown(dateValue) {
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const deadlineTime = new Date(year, month - 1, day + 1).getTime();
+  const distance = deadlineTime - Date.now();
+  if (distance <= 0) return "✅ Deadline is completed";
 
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  return `⏳ ${days}d ${hours}h ${mins}m ${seconds}s left`;
+}
 
-  document.getElementById("countdownTimer").textContent =
-    `⏳ ${days}d ${hours}h ${mins}m ${seconds}s left`;
+function updateCountdown() {
+  document.getElementById("countdownTimer").textContent = formatDeadlineCountdown(deadline);
+  document.getElementById("lectureCountdownTimer").textContent = formatDeadlineCountdown(lectureDeadline || deadline);
   updateLectureStats();
 }
 
