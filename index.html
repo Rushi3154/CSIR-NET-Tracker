@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSIR-NET Chemistry Topic Tracker v2.0</title>
+<title>CSIR-NET Chemistry Topic Tracker v2.1</title>
 <script>
   let savedTheme = null;
   try {
@@ -16,259 +16,914 @@
 <style>
 :root {
   color-scheme: light;
-  --bg: #dce8f4; --card: rgb(248 251 255 / 0.72); --surface: #f7faff;
-  --surface-soft: rgb(237 244 252 / 0.78); --text: #202b3c; --muted: #617186;
-  --border: rgb(255 255 255 / 0.48); --accent: #1768c4; --accent-hover: #0f56a7;
-  --accent2: #16835c; --doing: #a86106; --danger: #c03945;
-  --radius-sm: 12px; --radius-md: 18px; --radius-lg: 24px;
-  --shadow-sm: 0 2px 10px rgb(35 56 82 / 0.07);
-  --shadow: 0 10px 28px rgb(35 56 82 / 0.12);
-  --shadow-lg: 0 20px 50px rgb(35 56 82 / 0.19);
-  --glass-border: rgb(255 255 255 / 0.6);
-  --focus-ring: 0 0 0 4px rgb(23 104 196 / 0.18);
+  --bg: #f4f6fa;
+  --card: rgba(255, 255, 255, 0.76);
+  --card-hover: rgba(255, 255, 255, 0.92);
+  --surface: rgba(238, 242, 248, 0.72);
+  --surface-soft: rgba(248, 250, 253, 0.65);
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-subtle: rgba(15, 23, 42, 0.04);
+  --border-hover: rgba(2, 132, 199, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --accent: #0284c7;
+  --accent-hover: #0369a1;
+  --accent-light: rgba(2, 132, 199, 0.08);
+  --accent-glow: rgba(2, 132, 199, 0.15);
+  --accent2: #10b981;
+  --accent2-light: rgba(16, 185, 129, 0.1);
+  --doing: #d97706;
+  --doing-light: rgba(217, 119, 6, 0.1);
+  --danger: #e11d48;
+  --danger-light: rgba(225, 29, 72, 0.08);
+  
+  --radius-xs: 6px;
+  --radius-sm: 9px;
+  --radius-md: 13px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+  
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 14px 34px -4px rgba(15, 23, 42, 0.09);
+  --focus-ring: 0 0 0 3px rgba(2, 132, 199, 0.22);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #171d28; --card: rgb(37 47 63 / 0.72); --surface: #252e3d;
-  --surface-soft: rgb(53 66 85 / 0.72); --text: #e8edf5; --muted: #a7b2c2;
-  --border: rgb(207 221 242 / 0.1); --accent: #8bbcff; --accent-hover: #b4d2ff;
-  --accent2: #7dd6b0; --doing: #f0bd72; --danger: #f08f98;
-  --shadow-sm: 0 2px 12px rgb(3 8 16 / 0.18);
-  --shadow: 0 12px 34px rgb(3 8 16 / 0.25);
-  --shadow-lg: 0 24px 60px rgb(3 8 16 / 0.38);
-  --glass-border: rgb(221 233 250 / 0.12);
-  --focus-ring: 0 0 0 4px rgb(139 188 255 / 0.22);
+  --bg: #090d16;
+  --card: rgba(18, 25, 38, 0.72);
+  --card-hover: rgba(24, 34, 52, 0.82);
+  --surface: rgba(26, 36, 56, 0.6);
+  --surface-soft: rgba(30, 42, 64, 0.45);
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --border: rgba(148, 163, 184, 0.12);
+  --border-subtle: rgba(148, 163, 184, 0.06);
+  --border-hover: rgba(56, 189, 248, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --accent-light: rgba(56, 189, 248, 0.12);
+  --accent-glow: rgba(56, 189, 248, 0.2);
+  --accent2: #34d399;
+  --accent2-light: rgba(52, 211, 153, 0.12);
+  --doing: #fbbf24;
+  --doing-light: rgba(251, 191, 36, 0.12);
+  --danger: #f87171;
+  --danger-light: rgba(248, 113, 113, 0.12);
+  
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --focus-ring: 0 0 0 3px rgba(56, 189, 248, 0.25);
 }
 
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; line-height: 1.5; }
-.container { max-width: 1200px; margin: auto; padding: 32px 20px 60px; }
-.top { display: flex; justify-content: space-between; gap: 20px; align-items: end; flex-wrap: wrap; margin-bottom: 24px; }
-.greeting { background: #eef2ff; color: #3730a3; padding: 14px 18px; border-radius: var(--radius-md); margin-bottom: 20px; font-size: 18px; font-weight: 600; }
-h1 { margin: 0; font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
-.sub { color: var(--muted); margin-top: 8px; font-size: 15px; }
-.motivation-banner { background: #1e293b; color: #f8fafc; padding: 20px 24px; border-radius: var(--radius-md); margin-bottom: 24px; text-align: center; box-shadow: var(--shadow); }
-.motivation-quote { font-size: 16px; font-style: italic; margin-bottom: 12px; color: #cbd5e1; line-height: 1.6; }
-.motivation-quote::before { content: '“'; font-size: 20px; color: #4f46e5; }
-.motivation-quote::after { content: '”'; font-size: 20px; color: #4f46e5; }
-.motivation-data { font-size: 15px; font-weight: 600; color: #34d399; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 999px; display: inline-block; }
-.actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-button, .select, input { font: inherit; transition: all 0.2s ease; }
-.btn { border: 1px solid var(--border); background: var(--card); color: var(--text); padding: 10px 16px; border-radius: var(--radius-sm); font-weight: 500; cursor: pointer; box-shadow: var(--shadow-sm); }
-.btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow); }
-.btn.danger { color: var(--danger); }
-.btn.danger:hover { background: #fef2f2; border-color: var(--danger); }
-
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 0 0 24px; }
-.stat { background: var(--card); border: none; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); transition: transform 0.2s ease; }
-.stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.stat[role="button"] { cursor: pointer; }
-.stat[role="button"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-.stat small { display: block; color: var(--muted); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
-.stat strong { display: block; font-size: 28px; font-weight: 700; margin-top: 8px; color: #111827; }
-
-.progress-card { background: var(--card); border: none; border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow); }
-.progress-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 16px; }
-.progress-head strong { font-size: 20px; color: var(--accent); }
-.bar { height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 14px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
-.bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #818cf8); border-radius: 999px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-.controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-.search, .select { border: 1px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 12px 16px; outline: none; box-shadow: var(--shadow-sm); }
-.search { flex: 1; min-width: 250px; }
-.search:focus, .select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-.topic-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: var(--card); padding: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 24px; }
-.topic-form input, .topic-form select { border: 1px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 10px 12px; min-width: 140px; }
-.topic-form input[name="name"] { flex: 1; min-width: 220px; }
-.topic-actions { display: flex; gap: 8px; margin-top: 12px; }
-.topic-actions .btn { padding: 7px 10px; font-size: 13px; }
-dialog { width: min(440px, calc(100% - 32px)); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; color: var(--text); box-shadow: var(--shadow-lg); }
-dialog::backdrop { background: rgb(15 23 42 / 0.45); }
-.edit-form { display: grid; gap: 14px; }
-.edit-form h2 { margin: 0; font-size: 20px; }
-.edit-form label { display: grid; gap: 6px; font-weight: 500; }
-.edit-form input, .edit-form select { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font: inherit; }
-.edit-form textarea { width: 100%; min-height: 220px; resize: vertical; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text); background: var(--surface-soft); font: inherit; line-height: 1.5; }
-.edit-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
-.topic-list-dialog { width: min(560px, calc(100% - 32px)); max-height: min(680px, calc(100% - 32px)); overflow: hidden; }
-.topic-list-dialog[open]::backdrop { background: rgb(15 23 42 / 0.45); }
-.topic-list-dialog h2 { margin: 0; font-size: 20px; }
-.topic-list { display: grid; gap: 8px; max-height: min(52vh, 440px); overflow-y: auto; padding: 2px 6px 2px 2px; margin: 0; list-style: none; }
-.topic-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--surface-soft); }
-.topic-list-name { min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
-.topic-list-meta { flex: 0 0 auto; color: var(--muted); font-size: 12px; }
-.topic-list-empty { margin: 0; color: var(--muted); text-align: center; padding: 20px 8px; }
-@media (prefers-reduced-motion: reduce) {
-  .topic-list-dialog::backdrop { transition-duration: 0.01ms; }
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-.collapsible { border: none; border-radius: var(--radius-md); background: transparent; margin: 24px 0; }
-.section-title { padding: 16px 20px; margin: 0 !important; cursor: pointer; user-select: none; background: var(--card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s ease; }
-.section-title:hover { background: #f8fafc; }
-.section-title h2 { font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 12px; }
-.badge { background: #e0e7ff; border-radius: 999px; padding: 4px 10px; font-size: 13px; color: #3730a3; font-weight: 500; }
-.section-title .collapse-arrow { transition: transform 0.3s ease; font-size: 14px; color: var(--muted); }
-.collapsible.closed .collapse-arrow { transform: rotate(-90deg); }
-.collapsible.closed .section-body { display: none; }
-.section-body { padding-top: 12px; }
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
 
-.topic { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; margin: 12px 0; box-shadow: var(--shadow-sm); transition: background-color 0.18s ease, box-shadow 0.18s ease; }
-.topic:hover { transform: translateX(4px); box-shadow: var(--shadow); }
-.topic.completed { border-left: 6px solid var(--accent2); }
-.topic.doing { border-left: 6px solid var(--doing); }
-.topic.skip { border-left: 6px solid var(--danger); opacity: 0.85; }
-
-.exam { margin: 0 0 24px; padding: 16px 20px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); color: #1e3a8a; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-.exam-date { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.deadline-input { border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 6px 8px; color: inherit; font: inherit; }
-
-.topic-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; }
-.topic-main > div:first-child { min-width: 0; }
-.name { font-weight: 600; font-size: 16px; color: #111827; text-align: left; }
-.marks { font-weight: 700; white-space: nowrap; background: #f3f4f6; padding: 8px 12px; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
-.inline-edit-trigger { border: 0; background: transparent; cursor: pointer; font: inherit; }
-.inline-edit-trigger:hover { color: var(--accent); }
-.inline-edit-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-.status-group { display: flex; background: #f9fafb; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 4px; }
-.status-btn { border: none; background: transparent; padding: 6px 12px; font-size: 13px; font-weight: 500; color: var(--muted); border-radius: 6px; cursor: pointer; }
-.status-btn:hover:not(.active) { background: #e5e7eb; color: var(--text); }
-.status-btn.active[data-value="remaining"] { background: white; color: var(--text); box-shadow: var(--shadow-sm); }
-.status-btn.active[data-value="doing"] { background: #fef3c7; color: #b45309; box-shadow: var(--shadow-sm); }
-.status-btn.active[data-value="completed"] { background: #d1fae5; color: #047857; box-shadow: var(--shadow-sm); }
-.status-btn.active[data-value="skip"] { background: #fee2e2; color: #b91c1c; box-shadow: var(--shadow-sm); }
-
-.checks { display: flex; gap: 12px 20px; flex-wrap: wrap; align-items: center; margin-top: 12px; color: var(--muted); font-size: 14px; }
-.checks label { display: flex; align-items: center; gap: 8px; cursor: pointer; transition: color 0.2s; }
-.checks label:hover { color: var(--text); }
-.checks input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
-.meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
-.status-group { flex-wrap: wrap; }
-.done-note { color: var(--accent2); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-.empty { text-align: center; color: var(--muted); padding: 40px; font-size: 15px; background: var(--card); border-radius: var(--radius-md); border: 1px dashed var(--border); }
-
-html { min-height: 100%; scroll-behavior: smooth; }
 body {
+  margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 12% 0%, rgb(196 177 139 / 0.12), transparent 34rem),
-    radial-gradient(ellipse at 88% 12%, rgb(157 168 163 / 0.1), transparent 32rem),
-    var(--bg);
+  background-color: var(--bg);
+  background-image: 
+    radial-gradient(ellipse 85% 55% at 15% -10%, rgba(219, 234, 254, 0.65), transparent 70%),
+    radial-gradient(ellipse 65% 45% at 85% 12%, rgba(224, 242, 254, 0.45), transparent 60%);
   background-attachment: fixed;
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Inter", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.012em;
   transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.container { max-width: 1160px; padding: 42px 24px 100px; }
-.top { align-items: center; margin-bottom: 28px; }
-h1 { color: var(--text); font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.045em; }
-.sub { color: var(--muted); }
-.actions { gap: 8px; }
-button, input, select { font-family: inherit; }
-.btn {
-  border-color: var(--border); background: var(--card); color: var(--text);
-  border-radius: 999px; padding: 10px 15px; box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+
+:root[data-theme="dark"] body {
+  background-image: 
+    radial-gradient(ellipse 85% 55% at 15% -10%, rgba(30, 58, 102, 0.3), transparent 70%),
+    radial-gradient(ellipse 65% 45% at 85% 12%, rgba(14, 116, 144, 0.18), transparent 60%);
 }
-.btn:hover { background: var(--surface); border-color: var(--border); color: var(--accent); transform: translateY(-1px); }
-.btn.danger { color: var(--danger); }
-.btn.danger:hover { background: rgb(223 75 69 / 0.1); border-color: rgb(223 75 69 / 0.35); }
-.greeting, .motivation-banner, .exam, .stat, .progress-card, .topic-form, .section-title, .topic, .empty {
+
+/* Accessibility utility for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Tabular numbers for counters */
+.stat strong,
+.marks,
+.lecture-input,
+.deadline-countdown,
+.countdown-tile-value,
+#pct,
+.chip-count,
+.badge {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Window Titlebar (Desktop Electron) */
+.window-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 14px;
+  background: var(--card);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.window-bar[hidden] { display: none; }
+.window-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.window-title-icon { font-size: 13.5px; }
+.window-controls {
+  height: 100%;
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+.window-controls button {
+  width: 44px;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.window-controls button:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+.window-controls button.close:hover {
+  background: #e11d48;
+  color: #ffffff;
+}
+.window-controls svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+}
+
+/* Layout Container */
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 96px;
+}
+
+/* Upper Section: Title + Beside Countdown Metric Boxes */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.brand-section {
+  flex: 1 1 340px;
+  min-width: 280px;
+}
+h1 {
+  margin: 0;
+  font-size: clamp(24px, 2.8vw, 30px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.version-pill {
+  font-size: 11px;
+  vertical-align: middle;
+  background: var(--surface);
   border: 1px solid var(--border);
-  backdrop-filter: blur(24px) saturate(155%);
-  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: normal;
 }
+.sub {
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: 13.5px;
+}
+
+/* Upper Countdown Metric Boxes */
+.header-countdowns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.header-countdown-tile {
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  min-width: 195px;
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.header-countdown-tile:hover {
+  border-color: var(--border-hover);
+  background: var(--card-hover);
+  transform: translateY(-1px);
+}
+.countdown-tile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.countdown-tile-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.countdown-tile-date {
+  border: 1px solid transparent;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.15s ease;
+}
+.countdown-tile-date:hover {
+  border-color: var(--border-hover);
+  background: var(--card);
+}
+.countdown-tile-date:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+.countdown-tile-value {
+  font-size: 13.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--danger);
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  line-height: 1.25;
+}
+
+/* Toolbar & Action Buttons */
+.toolbar {
+  margin-bottom: 20px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Minimal Frosted Glass Buttons */
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--glass-border);
+  background: var(--card);
+  color: var(--text);
+  padding: 7px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs), var(--glass-specular);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  user-select: none;
+}
+.btn:hover {
+  background: var(--surface);
+  border-color: var(--border-hover);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm), var(--glass-specular);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn.danger {
+  color: var(--danger);
+}
+.btn.danger:hover {
+  background: var(--danger-light);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Greeting */
 .greeting {
-  background: var(--card); color: var(--accent); border-radius: var(--radius-md);
-  padding: 15px 20px; box-shadow: var(--shadow-sm); font-size: 16px;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  padding: 13px 18px;
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 3.5px solid var(--accent);
 }
+
+/* Motivation Banner */
 .motivation-banner {
-  background: linear-gradient(135deg, rgb(42 82 147 / 0.92), rgb(37 53 82 / 0.88));
-  border-color: rgb(255 255 255 / 0.14); border-radius: var(--radius-lg);
-  box-shadow: var(--shadow); padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  text-align: center;
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  position: relative;
+  overflow: hidden;
 }
-:root[data-theme="dark"] .motivation-banner {
-  background: linear-gradient(135deg, rgb(34 51 77 / 0.92), rgb(30 33 42 / 0.92));
+.motivation-quote {
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 8px;
+  color: var(--text);
+  line-height: 1.55;
 }
-.motivation-quote { color: #edf3ff; }
-.motivation-quote::before, .motivation-quote::after { color: #a9c8ff; }
-.motivation-data { background: rgb(85 201 139 / 0.15); color: #8ce0b3; }
-:root:not([data-theme="dark"]) .motivation-banner {
-  background: linear-gradient(135deg, rgb(91 112 133 / 0.96), rgb(75 91 105 / 0.94));
+.motivation-quote::before {
+  content: '“';
+  font-size: 16px;
+  color: var(--accent);
+  margin-right: 3px;
 }
-.stat, .progress-card, .topic-form, .section-title, .topic, .empty {
-  background: var(--card); border-color: var(--border); box-shadow: var(--shadow-sm);
+.motivation-quote::after {
+  content: '”';
+  font-size: 16px;
+  color: var(--accent);
+  margin-left: 3px;
 }
-.stat { padding: 20px; }
-.stat:hover { box-shadow: var(--shadow); }
-.stat small { color: var(--muted); }
-.stat strong, .name { color: var(--text); }
-.stat strong { letter-spacing: -0.04em; }
-.progress-card { border-radius: var(--radius-lg); }
-.progress-head strong { color: var(--accent); }
-.bar { background: var(--surface-soft); box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.08); }
-.controls { gap: 10px; }
-.search, .select, .topic-form input, .topic-form select, .edit-form input, .edit-form select {
-  color: var(--text); background: var(--surface-soft); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); box-shadow: none;
+.motivation-data {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent2);
+  background: var(--accent2-light);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
-.search::placeholder, .topic-form input::placeholder { color: var(--muted); }
-.search:focus, .select:focus, .topic-form input:focus, .topic-form select:focus,
-.edit-form input:focus, .edit-form select:focus { border-color: var(--accent); box-shadow: var(--focus-ring); outline: none; }
-.edit-form textarea:focus { border-color: var(--accent); box-shadow: var(--focus-ring); outline: none; }
-.topic-form { border-radius: var(--radius-md); padding: 14px; }
-dialog { background: var(--surface); color: var(--text); }
-.edit-form h2 { letter-spacing: -0.03em; }
-.section-title { border-radius: var(--radius-md); }
-.section-title:hover { background: var(--surface-soft); }
-.section-title h2 { color: var(--text); letter-spacing: -0.02em; }
-.badge { background: rgb(76 111 157 / 0.11); color: var(--accent); }
-.topic { border-radius: var(--radius-md); }
-.topic.completed { border-left-color: var(--accent2); }
-.topic.doing { border-left-color: var(--doing); }
-.topic.skip { border-left-color: var(--danger); }
-.exam {
-  background: rgb(111 139 166 / 0.1); border-color: rgb(111 139 166 / 0.18);
-  color: var(--accent); border-radius: var(--radius-md);
+
+/* Stats Metrics Grid (Frosted Glass Tiles) */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
 }
-.deadline-input { background: var(--surface); border-color: var(--border); color: var(--text); }
-#countdownTimer { color: var(--danger) !important; background: rgb(184 95 86 / 0.1) !important; }
-.deadline-countdown { font-weight: 700; color: var(--danger); background: rgb(184 95 86 / 0.1); padding: 4px 12px; border-radius: 999px; }
-.marks { background: var(--surface-soft); color: var(--muted); }
-.status-group { background: var(--surface-soft); border-color: var(--border); border-radius: 999px; }
-.status-btn { border-radius: 999px; }
-.status-btn:hover:not(.active) { background: rgb(127 135 151 / 0.15); color: var(--text); }
-.status-btn.active[data-value="remaining"] { background: var(--surface); color: var(--text); }
-.status-btn.active[data-value="doing"] { background: rgb(217 145 22 / 0.16); color: var(--doing); }
-.status-btn.active[data-value="completed"] { background: rgb(48 164 108 / 0.16); color: var(--accent2); }
-.status-btn.active[data-value="skip"] { background: rgb(223 75 69 / 0.14); color: var(--danger); }
-.celebration-burst { position: fixed; z-index: 30; pointer-events: none; }
-.celebration-burst span {
-  position: absolute; width: 8px; height: 12px; border-radius: 2px;
-  animation: confetti-burst var(--duration) cubic-bezier(0.15, 0.75, 0.35, 1) var(--delay) both;
+.stat {
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 15px 16px;
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 92px;
 }
-@keyframes confetti-burst {
-  to {
-    opacity: 0;
-    transform: translate3d(var(--x), var(--y), 0) rotate(var(--rotation)) scale(0.7);
-  }
+.stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  background: var(--card-hover);
+  box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.2), var(--glass-specular);
 }
-.checks { color: var(--muted); align-items: center; }
+.stat:active {
+  transform: scale(0.98);
+}
+.stat[role="button"] {
+  cursor: pointer;
+  user-select: none;
+}
+.stat:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.stat small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.stat strong {
+  display: block;
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.15;
+}
+.stat.clickable {
+  cursor: pointer;
+  position: relative;
+}
+.stat.clickable:hover {
+  border-color: var(--accent);
+}
+
+/* Progress Card */
+.progress-card {
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.progress-card[data-topic-list] {
+  cursor: pointer;
+}
+.progress-card[data-topic-list]:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  background: var(--card-hover);
+  box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.2), var(--glass-specular);
+}
+.progress-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+}
+.progress-head strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.bar {
+  height: 9px;
+  background: var(--surface);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 14px;
+  position: relative;
+}
+.bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #38bdf8);
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Controls & Interactive Filters */
+.controls-wrapper {
+  margin-bottom: 18px;
+  display: grid;
+  gap: 10px;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  font-size: 13.5px;
+  pointer-events: none;
+}
+.search {
+  width: 100%;
+  border: 1px solid var(--glass-border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 36px 8px 33px;
+  font-size: 13px;
+  outline: none;
+  box-shadow: var(--shadow-xs), var(--glass-specular);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.18s ease;
+}
+.search:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--card-hover);
+}
+.search::placeholder {
+  color: var(--muted);
+}
+.clear-search-btn {
+  position: absolute;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--surface);
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+.clear-search-btn:hover {
+  background: var(--border-hover);
+  color: var(--text);
+}
+.select {
+  border: 1px solid var(--glass-border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  box-shadow: var(--shadow-xs), var(--glass-specular);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--card-hover);
+}
+
+/* Interactive Status Filter Chips */
+.status-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs), var(--glass-specular);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+.chip:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+  background: var(--surface);
+  transform: translateY(-1px);
+}
+.chip.active {
+  background: var(--surface);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+.chip-count {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--bg);
+  color: var(--muted);
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+}
+.chip.active .chip-count {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: transparent;
+}
+
+/* Add Topic Form */
+.topic-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--card);
+  padding: 13px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  margin-bottom: 22px;
+}
+.topic-form input,
+.topic-form select {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 7px 11px;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.18s ease;
+}
+.topic-form input:focus,
+.topic-form select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--card);
+}
+.topic-form input[name="name"] {
+  flex: 1;
+  min-width: 200px;
+}
+.topic-form input[name="marks"] {
+  width: 85px;
+}
+.topic-form input[name="lectures"] {
+  width: 95px;
+}
+.topic-form button {
+  padding: 7px 15px;
+}
+
+/* Collapsible Category Groups */
+.collapsible {
+  margin: 16px 0;
+}
+.section-title {
+  padding: 13px 18px;
+  margin: 0 !important;
+  cursor: pointer;
+  user-select: none;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.section-title:hover {
+  background: var(--card-hover);
+  border-color: var(--border-hover);
+}
+.section-title:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.section-title h2 {
+  font-size: 15px;
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 3px 9px;
+  font-size: 11.5px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.section-title .collapse-arrow {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: 11px;
+  color: var(--muted);
+}
+.collapsible.closed .collapse-arrow {
+  transform: rotate(-90deg);
+}
+.collapsible.closed .section-body {
+  display: none;
+}
+.section-body {
+  padding-top: 8px;
+}
+
+/* Topic Cards */
+.topic {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 15px 18px;
+  margin: 9px 0;
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.topic::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  width: 3.5px;
+  border-radius: 0 4px 4px 0;
+  background: var(--border);
+  transition: background 0.2s ease;
+}
+.topic.remaining::before { background: var(--accent); }
+.topic.doing::before { background: var(--doing); }
+.topic.completed::before { background: var(--accent2); }
+.topic.skip::before { background: var(--danger); opacity: 0.8; }
+
+.topic:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  background: var(--card-hover);
+  box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.2), var(--glass-specular);
+}
+.topic-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+}
+.name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.15s ease;
+}
+.name:hover {
+  color: var(--accent);
+}
+.name:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Topic Checkbox Pills */
+.checks {
+  display: flex;
+  gap: 10px 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.checks label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+.checks label:hover {
+  color: var(--text);
+}
+.checks input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Lecture Stepper */
 .lecture-tracker {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  background: var(--surface-soft);
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
   padding: 3px 8px 3px 10px;
-  border-radius: 999px;
-  font-size: 13px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
   font-weight: 500;
   color: var(--muted);
   user-select: none;
-  transition: opacity 0.2s ease;
+  white-space: nowrap;
 }
 .lecture-tracker .lecture-label {
   display: inline-flex;
@@ -276,8 +931,7 @@ dialog { background: var(--surface); color: var(--text); }
   gap: 4px;
   color: var(--text);
   font-weight: 600;
-  font-size: 12.5px;
-  white-space: nowrap;
+  font-size: 11.5px;
 }
 .lecture-stepper {
   display: inline-flex;
@@ -285,8 +939,8 @@ dialog { background: var(--surface); color: var(--text); }
   gap: 4px;
 }
 .lecture-btn {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: 0;
   background: var(--card);
@@ -294,17 +948,17 @@ dialog { background: var(--surface); color: var(--text); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgb(65 57 42 / 0.1);
-  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.15s ease;
   padding: 0;
   line-height: 1;
 }
 .lecture-btn:hover:not(:disabled) {
   background: var(--accent);
-  color: #fff;
+  color: #ffffff;
   transform: scale(1.1);
 }
 .lecture-btn:active:not(:disabled) {
@@ -316,20 +970,18 @@ dialog { background: var(--surface); color: var(--text); }
   cursor: not-allowed;
   pointer-events: none;
 }
-.lecture-tracker.disabled {
-  opacity: 0.55;
-}
 .lecture-input {
-  width: 42px;
+  width: 36px;
+  height: 22px;
   text-align: center;
   border: 0;
   background: var(--card);
   color: var(--text);
-  border-radius: var(--radius-sm);
-  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  padding: 0 4px;
   font-weight: 700;
-  font-size: 13px;
-  box-shadow: inset 0 1px 2px rgb(65 57 42 / 0.05);
+  font-size: 12px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
   -moz-appearance: textfield;
 }
 .lecture-input::-webkit-outer-spin-button,
@@ -337,377 +989,389 @@ dialog { background: var(--surface); color: var(--text); }
   -webkit-appearance: none;
   margin: 0;
 }
-.topic-form input[name="lectures"] { min-width: 110px; max-width: 140px; }
-.stat.clickable {
-  cursor: pointer;
-  position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.stat.clickable:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-.stat.clickable:focus-visible {
-  outline: 3px solid rgb(76 111 157 / 0.55);
-  outline-offset: 3px;
-}
-input[type="checkbox"] { accent-color: var(--accent); }
-:focus-visible { outline: 3px solid rgb(76 111 157 / 0.55); outline-offset: 3px; }
-.theme-switcher {
-  position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom));
-  z-index: 10; display: flex; gap: 3px; padding: 5px;
-  border: 1px solid var(--glass-border); border-radius: 999px;
-  background: var(--card); box-shadow: var(--shadow);
-  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
-}
-.theme-switcher button {
-  border: 0; border-radius: 999px; padding: 9px 13px; background: transparent;
-  color: var(--muted); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-.theme-switcher button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
-.theme-switcher button:hover { color: var(--accent); }
-@media (max-width: 720px) {
-  .container { padding: 28px 16px calc(100px + env(safe-area-inset-bottom)); }
-  .top { align-items: flex-start; }
-  .actions { width: 100%; }
-  .actions .btn { flex: 1 1 auto; }
-  .topic-main { grid-template-columns: 1fr; gap: 14px; }
-  .meta { justify-content: flex-start; }
-  .status-group { flex-wrap: wrap; }
-  .section-title { align-items: flex-start; gap: 10px; }
-  .section-title h2 { flex-wrap: wrap; font-size: 16px; }
-}
-@media (max-width: 900px) {
-  .topic-main { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .meta { justify-content: space-between; }
-  .status-group { flex: 1 1 auto; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+.lecture-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
-.window-bar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  height: 40px;
+.done-note {
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.topic.completed .done-note { color: var(--accent2); }
+.topic.skip .done-note { color: var(--danger); }
+
+/* Meta & Status Segmented Buttons */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.status-group {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+.status-btn {
+  border: 0;
+  background: transparent;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.status-btn:hover:not(.active) {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text);
+}
+.status-btn.active[data-value="remaining"] {
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+.status-btn.active[data-value="doing"] {
+  background: var(--doing-light);
+  color: var(--doing);
+  font-weight: 600;
+}
+.status-btn.active[data-value="completed"] {
+  background: var(--accent2-light);
+  color: var(--accent2);
+  font-weight: 600;
+}
+.status-btn.active[data-value="skip"] {
+  background: var(--danger-light);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Marks Badge */
+.marks {
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.marks:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Topic Bottom Actions */
+.topic-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.topic-actions .btn {
+  padding: 4px 9px;
+  font-size: 12px;
+}
+.note-indicator {
+  color: var(--accent);
+  font-size: 9px;
+  vertical-align: middle;
+  margin-left: 3px;
+}
+
+/* Empty State */
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 44px 20px;
+  font-size: 14.5px;
+  background: var(--card);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border);
+  margin: 16px 0;
+}
+
+/* Dialog Modals (Frosted Glass) */
+dialog {
+  width: min(440px, calc(100% - 32px));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow-lg), var(--glass-specular);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  outline: none;
+}
+dialog::backdrop {
+  background: rgba(9, 13, 22, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.edit-form {
+  display: grid;
+  gap: 13px;
+}
+.edit-form h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.edit-form label {
+  display: grid;
+  gap: 5px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text);
+}
+.edit-form input,
+.edit-form select {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 11px;
+  font-size: 13.5px;
+  outline: none;
+  transition: all 0.18s ease;
+}
+.edit-form input:focus,
+.edit-form select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--card);
+}
+.edit-form textarea {
+  width: 100%;
+  min-height: 190px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  outline: none;
+  transition: all 0.18s ease;
+}
+.edit-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--card);
+}
+.edit-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* Topic List Dialog */
+.topic-list-dialog {
+  width: min(560px, calc(100% - 32px));
+  max-height: min(680px, calc(100% - 32px));
+  overflow: hidden;
+}
+.topic-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(52vh, 440px);
+  overflow-y: auto;
+  padding: 2px 4px 2px 2px;
+  margin: 0;
+  list-style: none;
+}
+.topic-list li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 14px;
-  background: var(--bg);
-  color: var(--muted);
-  -webkit-app-region: drag;
-  user-select: none;
-}
-.window-bar[hidden] { display: none; }
-.window-title {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-width: 0;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-.window-title-icon { font-size: 15px; }
-.window-controls {
-  height: 100%;
-  display: flex;
-  -webkit-app-region: no-drag;
-}
-.window-controls button {
-  width: 46px;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.window-controls button:hover { background: rgb(127 135 151 / 0.16); }
-.window-controls button.close:hover { background: #c42b1c; color: #fff; }
-.window-controls svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; }
-@media (max-width: 520px) {
-  .container { padding-inline: 14px; }
-  .actions .btn { min-height: 44px; }
-  .controls > * { width: 100%; min-width: 0; }
-  .topic-form input, .topic-form select, .topic-form input[name="name"] {
-    width: 100%; min-width: 0;
-  }
-  .topic-form button { width: 100%; min-height: 44px; }
-  .exam { align-items: flex-start; flex-direction: column; }
-  .status-group { width: 100%; border-radius: var(--radius-md); }
-  .status-btn { flex: 1 1 40%; min-height: 40px; }
-  .window-title { font-size: 12px; }
-  .window-controls button { width: 40px; }
-}
-
-/* Keep structure through tone and depth rather than visible outlines. */
-:root {
-  --border: transparent;
-  --glass-border: transparent;
-}
-:root[data-theme="dark"] {
-  --border: transparent;
-  --glass-border: transparent;
-}
-.greeting, .motivation-banner, .exam, .stat, .progress-card, .topic-form,
-.section-title, .topic, .empty {
-  border: 0;
-}
-.stat, .progress-card, .topic-form, .section-title, .topic, .empty {
-  box-shadow: 0 8px 28px rgb(65 57 42 / 0.055);
-}
-:root[data-theme="dark"] .stat,
-:root[data-theme="dark"] .progress-card,
-:root[data-theme="dark"] .topic-form,
-:root[data-theme="dark"] .section-title,
-:root[data-theme="dark"] .topic,
-:root[data-theme="dark"] .empty {
-  box-shadow: 0 10px 32px rgb(0 0 0 / 0.16);
-}
-.btn {
-  border: 0;
-  box-shadow: 0 4px 14px rgb(65 57 42 / 0.07);
-}
-.btn:hover { box-shadow: 0 8px 22px rgb(65 57 42 / 0.11); }
-.search, .select, .topic-form input, .topic-form select,
-.edit-form input, .edit-form select {
-  border: 0;
-  box-shadow: inset 0 1px 2px rgb(65 57 42 / 0.035);
-}
-.search:focus, .select:focus, .topic-form input:focus, .topic-form select:focus,
-.edit-form input:focus, .edit-form select:focus {
-  border: 0;
-  box-shadow: var(--focus-ring);
-}
-.status-group { border: 0; }
-.exam { background: rgb(111 139 166 / 0.075); }
-.theme-switcher {
-  border: 0;
-  padding: 6px;
-  box-shadow: 0 10px 32px rgb(65 57 42 / 0.14);
-}
-dialog { border: 0; }
-
-.stat[role="button"] {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 112px;
-  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms ease, background 220ms ease;
-}
-.stat[role="button"]:hover { transform: translateY(-3px); }
-.stat[role="button"]:active { transform: scale(0.98); }
-.progress-card[data-topic-list] { cursor: pointer; transition: transform 220ms ease, box-shadow 220ms ease; }
-.progress-card[data-topic-list]:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-.progress-card[data-topic-list]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-
-:root[data-theme="light"] body {
-  background:
-    radial-gradient(ellipse at 14% 0%, rgb(255 255 255 / 0.9), transparent 34rem),
-    radial-gradient(ellipse at 92% 10%, rgb(179 211 241 / 0.65), transparent 36rem),
-    linear-gradient(145deg, #e8f0f8, #cfdeed);
-  background-attachment: fixed;
-}
-:root[data-theme="light"] .window-bar {
-  background: rgb(245 249 255 / 0.56);
-  border-bottom: 1px solid rgb(255 255 255 / 0.48);
-  backdrop-filter: blur(30px) saturate(145%);
-  -webkit-backdrop-filter: blur(30px) saturate(145%);
-}
-:root[data-theme="light"] .greeting,
-:root[data-theme="light"] .stat,
-:root[data-theme="light"] .progress-card,
-:root[data-theme="light"] .topic-form,
-:root[data-theme="light"] .section-title,
-:root[data-theme="light"] .topic,
-:root[data-theme="light"] .empty,
-:root[data-theme="light"] .exam,
-:root[data-theme="light"] .btn,
-:root[data-theme="light"] .search,
-:root[data-theme="light"] .select,
-:root[data-theme="light"] .topic-form input,
-:root[data-theme="light"] .topic-form select,
-:root[data-theme="light"] .edit-form input,
-:root[data-theme="light"] .edit-form select,
-:root[data-theme="light"] .edit-form textarea,
-:root[data-theme="light"] dialog,
-:root[data-theme="light"] .theme-switcher {
-  border: 1px solid rgb(255 255 255 / 0.58);
-  background-color: var(--card);
-  box-shadow: 0 8px 24px rgb(39 62 89 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.66);
-  backdrop-filter: blur(24px) saturate(145%);
-  -webkit-backdrop-filter: blur(24px) saturate(145%);
-}
-:root[data-theme="light"] .stat strong,
-:root[data-theme="light"] .name { color: var(--text); }
-:root[data-theme="light"] .motivation-banner {
-  background: linear-gradient(135deg, rgb(45 88 135 / 0.88), rgb(60 105 151 / 0.82));
-  border-color: rgb(255 255 255 / 0.34);
-  backdrop-filter: blur(24px) saturate(145%);
-  -webkit-backdrop-filter: blur(24px) saturate(145%);
-}
-:root[data-theme="light"] .exam { color: var(--text); }
-:root[data-theme="light"] .marks,
-:root[data-theme="light"] .topic-list li { background: rgb(230 239 249 / 0.74); color: var(--text); }
-:root[data-theme="light"] .theme-switcher button[aria-pressed="true"] {
-  background: rgb(255 255 255 / 0.88);
-  color: var(--accent);
-  box-shadow: 0 2px 8px rgb(39 62 89 / 0.1);
-}
-:root[data-theme="light"] dialog::backdrop { background: rgb(35 51 72 / 0.3); }
-
-:root[data-theme="dark"] body {
-  background:
-    radial-gradient(ellipse at 12% 0%, rgb(87 111 151 / 0.2), transparent 36rem),
-    radial-gradient(ellipse at 90% 12%, rgb(111 93 137 / 0.15), transparent 34rem),
-    linear-gradient(145deg, #1b2432, #151a24);
-  background-attachment: fixed;
-}
-:root[data-theme="dark"] .window-bar {
-  background: rgb(27 36 50 / 0.66);
-  border-bottom: 1px solid rgb(221 233 250 / 0.1);
-  backdrop-filter: blur(30px) saturate(135%);
-  -webkit-backdrop-filter: blur(30px) saturate(135%);
-}
-:root[data-theme="dark"] .greeting,
-:root[data-theme="dark"] .stat,
-:root[data-theme="dark"] .progress-card,
-:root[data-theme="dark"] .topic-form,
-:root[data-theme="dark"] .section-title,
-:root[data-theme="dark"] .topic,
-:root[data-theme="dark"] .empty,
-:root[data-theme="dark"] .exam,
-:root[data-theme="dark"] .btn,
-:root[data-theme="dark"] .search,
-:root[data-theme="dark"] .select,
-:root[data-theme="dark"] .topic-form input,
-:root[data-theme="dark"] .topic-form select,
-:root[data-theme="dark"] .edit-form input,
-:root[data-theme="dark"] .edit-form select,
-:root[data-theme="dark"] .edit-form textarea,
-:root[data-theme="dark"] dialog,
-:root[data-theme="dark"] .theme-switcher {
-  border: 1px solid rgb(221 233 250 / 0.1);
-  background-color: var(--card);
-  box-shadow: 0 10px 28px rgb(3 8 16 / 0.2), inset 0 1px 0 rgb(221 233 250 / 0.08);
-  backdrop-filter: blur(24px) saturate(135%);
-  -webkit-backdrop-filter: blur(24px) saturate(135%);
-}
-:root[data-theme="dark"] .stat strong,
-:root[data-theme="dark"] .name { color: var(--text); }
-:root[data-theme="dark"] .motivation-banner {
-  background: linear-gradient(135deg, rgb(49 72 105 / 0.88), rgb(67 57 87 / 0.82));
-  border-color: rgb(221 233 250 / 0.12);
-  backdrop-filter: blur(24px) saturate(135%);
-  -webkit-backdrop-filter: blur(24px) saturate(135%);
-}
-:root[data-theme="dark"] .motivation-quote { color: #e7edf7; }
-:root[data-theme="dark"] .motivation-data { color: #a8e2c8; background: rgb(77 166 123 / 0.17); }
-:root[data-theme="dark"] .exam { color: var(--text); }
-:root[data-theme="dark"] .marks,
-:root[data-theme="dark"] .topic-list li { background: rgb(65 80 102 / 0.62); color: var(--text); }
-:root[data-theme="dark"] .theme-switcher button[aria-pressed="true"] {
-  background: rgb(224 233 246 / 0.14);
-  color: var(--text);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.14);
-}
-:root[data-theme="dark"] dialog::backdrop { background: rgb(8 12 19 / 0.58); }
-
-:root[data-theme="light"] .greeting,
-:root[data-theme="dark"] .greeting {
+  gap: 12px;
+  padding: 10px 13px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  border: 1px solid var(--border-subtle);
+}
+.topic-list-name {
+  min-width: 0;
+  font-weight: 600;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.topic-list-meta {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.topic-list-empty {
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+  padding: 22px 8px;
 }
 
-:root[data-theme="light"] .btn,
-:root[data-theme="light"] .stat,
-:root[data-theme="light"] .topic,
-:root[data-theme="light"] .progress-card,
-:root[data-theme="light"] .section-title,
-:root[data-theme="dark"] .btn,
-:root[data-theme="dark"] .stat,
-:root[data-theme="dark"] .topic,
-:root[data-theme="dark"] .progress-card,
-:root[data-theme="dark"] .section-title {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+/* Floating Segmented Theme Switcher */
+.theme-switcher {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 100;
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  box-shadow: var(--shadow-lg), var(--glass-specular);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
-
-.btn:hover,
-.topic:hover,
-.stat:hover,
-.stat[role="button"]:hover,
-.stat.clickable:hover,
-.progress-card[data-topic-list]:hover,
-.lecture-btn:hover:not(:disabled),
-.lecture-btn:active:not(:disabled) {
-  transform: none;
+.theme-switcher button {
+  border: 0;
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.btn { transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
-.btn:hover { background: var(--surface-soft); color: var(--accent); box-shadow: var(--shadow); }
-.topic {
-  position: relative;
-  border-left: 0;
-  --topic-status-color: var(--accent);
-}
-.topic::before {
-  content: "";
-  position: absolute;
-  top: 14px;
-  bottom: 14px;
-  left: 0;
-  width: 4px;
-  border-radius: 0 4px 4px 0;
-  background: var(--topic-status-color);
-}
-.topic.completed { --topic-status-color: var(--accent2); }
-.topic.doing { --topic-status-color: var(--doing); }
-.topic.skip { --topic-status-color: var(--danger); }
-.topic:hover { background-color: var(--surface-soft); box-shadow: var(--shadow); }
-.stat[role="button"]:hover,
-.stat.clickable:hover,
-.progress-card[data-topic-list]:hover {
-  background-color: var(--surface-soft);
-  box-shadow: var(--shadow-lg);
-}
-.lecture-btn:hover:not(:disabled) { box-shadow: 0 0 0 3px var(--focus-ring); }
-.name.inline-edit-trigger { padding: 0; font-weight: 600; font-size: 16px; }
-.marks.inline-edit-trigger { font-weight: 700; font-size: 14px; }
-.name.inline-edit-trigger:hover,
-.marks.inline-edit-trigger:hover { color: var(--accent); }
-
-:root[data-theme="light"] .btn:hover,
-:root[data-theme="dark"] .btn:hover {
-  background-color: var(--surface-soft);
+.theme-switcher button[aria-pressed="true"] {
+  background: var(--surface);
   color: var(--accent);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-xs);
 }
-:root[data-theme="light"] .topic:hover,
-:root[data-theme="dark"] .topic:hover,
-:root[data-theme="light"] .stat[role="button"]:hover,
-:root[data-theme="dark"] .stat[role="button"]:hover,
-:root[data-theme="light"] .progress-card[data-topic-list]:hover,
-:root[data-theme="dark"] .progress-card[data-topic-list]:hover,
-:root[data-theme="light"] .section-title:hover,
-:root[data-theme="dark"] .section-title:hover {
-  background-color: var(--surface-soft);
-  box-shadow: var(--shadow);
+.theme-switcher button:hover:not([aria-pressed="true"]) {
+  color: var(--text);
 }
 
+/* Celebration Confetti */
+.celebration-burst {
+  position: fixed;
+  z-index: 999;
+  pointer-events: none;
+}
+.celebration-burst span {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  animation: confetti-burst var(--duration) cubic-bezier(0.15, 0.75, 0.35, 1) var(--delay) both;
+}
+@keyframes confetti-burst {
+  to {
+    opacity: 0;
+    transform: translate3d(var(--x), var(--y), 0) rotate(var(--rotation)) scale(0.7);
+  }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 860px) {
+  .top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .header-countdowns {
+    width: 100%;
+  }
+  .header-countdown-tile {
+    flex: 1 1 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 16px 80px;
+  }
+  .actions {
+    width: 100%;
+  }
+  .actions .btn {
+    flex: 1 1 auto;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .topic-main {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .meta {
+    justify-content: space-between;
+  }
+  .status-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .status-btn {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .stat {
+    padding: 12px;
+    min-height: 80px;
+  }
+  .stat strong {
+    font-size: 21px;
+  }
+  .header-countdowns {
+    flex-direction: column;
+  }
+  .header-countdown-tile {
+    width: 100%;
+    min-width: 0;
+  }
+  .topic-form input,
+  .topic-form select,
+  .topic-form input[name="name"],
+  .topic-form button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
 <header class="window-bar" aria-label="Application title bar" ondblclick="window.api?.toggleMaximizeWindow()">
-  <div class="window-title"><span class="window-title-icon" aria-hidden="true">🧪</span><span>CSIR-NET Chemistry Topic Tracker v2.0</span></div>
+  <div class="window-title"><span class="window-title-icon" aria-hidden="true">🧪</span><span>CSIR-NET Chemistry Topic Tracker v2.1</span></div>
   <nav class="window-controls" aria-label="Window controls">
     <button type="button" aria-label="Minimize window" title="Minimize" onclick="window.api?.minimizeWindow()">
       <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8"/></svg>
@@ -722,39 +1386,52 @@ dialog { border: 0; }
 </header>
 <div class="container">
   <div class="top">
-    <div>
-      <h1>🧪 CSIR-NET Chemistry Tracker <span style="font-size: 13px; vertical-align: middle; background: var(--surface-soft); padding: 3px 8px; border-radius: 999px; font-weight: 600; color: var(--accent); letter-spacing: normal;">v2.0</span></h1>
+    <div class="brand-section">
+      <h1>🧪 CSIR-NET Chemistry Tracker <span class="version-pill">v2.1</span></h1>
       <div class="sub">Your progress saves automatically on this device.</div>
     </div>
+
+    <div class="header-countdowns" role="region" aria-label="Deadlines and Countdown Timers">
+      <div class="header-countdown-tile" title="CSIR-NET Examination Target">
+        <div class="countdown-tile-header">
+          <span class="countdown-tile-title">📅 Exam Target</span>
+          <label class="sr-only" for="deadlineInput">CSIR-NET Deadline Date</label>
+          <input id="deadlineInput" class="deadline-input countdown-tile-date" type="date" value="2026-12-19" title="Click to edit CSIR-NET date" required>
+        </div>
+        <div id="countdownTimer" class="countdown-tile-value">⏳ Calculating...</div>
+      </div>
+
+      <div class="header-countdown-tile" title="Lecture Completion Target">
+        <div class="countdown-tile-header">
+          <span class="countdown-tile-title">📚 Lecture Target</span>
+          <label class="sr-only" for="lectureDeadlineInput">Lecture Completion Target Date</label>
+          <input id="lectureDeadlineInput" class="deadline-input countdown-tile-date" type="date" title="Click to edit lecture deadline" required>
+        </div>
+        <div id="lectureCountdownTimer" class="countdown-tile-value">⏳ Calculating...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar">
     <div class="actions">
       <button class="btn" id="exportBtn">Export CSV</button>
       <button class="btn" id="importBtn">Import CSV</button>
+      <button class="btn" id="backupBtn">Backup</button>
+      <button class="btn" id="restoreBtn">Restore</button>
+      <button class="btn" id="undoBtn" title="Nothing to undo (Ctrl+Z)" disabled>↶ Undo</button>
       <button class="btn" id="changeSaveLocationBtn">Change Save Location</button>
       <button class="btn danger" id="resetBtn">Reset All Data</button>
     </div>
     <input id="importCsvFile" type="file" accept=".csv,text/csv" hidden>
+    <input id="importBackupFile" type="file" accept=".json,application/json" hidden>
   </div>
 
   <div class="greeting" id="greeting" aria-live="polite"></div>
 
-<div class="motivation-banner">
+  <div class="motivation-banner">
     <div class="motivation-quote" id="dailyQuote"></div>
     <div class="motivation-data" id="dataMotivation"></div>
   </div>
-
-<div class="exam" style="justify-content: space-between;">
-  <label class="exam-date" for="deadlineInput">📅 <strong>CSIR-NET Deadline:</strong>
-    <input id="deadlineInput" class="deadline-input" type="date" value="2026-12-19" required>
-  </label>
-  <div id="countdownTimer" style="font-weight: 700; color: #b91c1c; background: #fee2e2; padding: 4px 12px; border-radius: 999px;">⏳ Calculating...</div>
-</div>
-
-<div class="exam" style="justify-content: space-between;">
-  <label class="exam-date" for="lectureDeadlineInput">📚 <strong>Lecture Completion Deadline:</strong>
-    <input id="lectureDeadlineInput" class="deadline-input" type="date" required>
-  </label>
-  <div id="lectureCountdownTimer" class="deadline-countdown">⏳ Calculating...</div>
-</div>
 
   <div class="stats">
     <div class="stat" data-topic-list="all" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="remainingTopicsDialog" title="Show all topics"><small>Total Marks</small><strong id="totalMarks">321</strong></div>
@@ -780,21 +1457,58 @@ dialog { border: 0; }
     <div class="sub" style="font-size:13px;margin-top:12px">Coverage uses Avg. Marks. Excluded topics are removed from the coverage calculation. <br/> <strong id="excludedMarks">0</strong> marks currently excluded.</div>
   </div>
 
-  <div class="controls">
-    <input id="search" class="search" type="search" placeholder="🔎 Search topic...">
-    <select id="statusFilter" class="select">
-      <option value="all">All Status</option>
-      <option value="remaining">Remaining</option>
-      <option value="doing">Doing</option>
-      <option value="completed">Completed</option>
-      <option value="skip">Don't want to do</option>
-    </select>
-    <select id="categoryFilter" class="select">
-      <option value="all">All Categories</option>
-      <option value="bumper">Bumper</option>
-      <option value="major">Major</option>
-      <option value="minor">Minor</option>
-    </select>
+  <section class="collapsible" aria-label="Smart Study Planner" id="plannerSection" style="display: none;">
+    <div class="section-title section-title-planner" role="button" tabindex="0" onclick="togglePlanner()">
+      <h2>🎯 Smart Study Planner <span class="badge">Phase 3</span></h2>
+      <span class="collapse-arrow">▼</span>
+    </div>
+    <div class="section-body planner-body" id="plannerBody">
+      <div id="plannerRecommendations"></div>
+      <div id="plannerWeakTopics" style="margin-top: 16px;"></div>
+      <div id="plannerReadiness" style="margin-top: 16px;"></div>
+      <button class="btn" onclick="generatePlan()" style="margin-top: 16px;">Generate Study Plan</button>
+    </div>
+  </section>
+
+  <div class="controls-wrapper">
+    <div class="controls">
+      <div class="search-wrapper">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input id="search" class="search" type="search" placeholder="Search topic... (Press / or Ctrl+K to focus)" autocomplete="off">
+        <button type="button" id="clearSearchBtn" class="clear-search-btn" title="Clear search (Esc)" aria-label="Clear search" hidden>✕</button>
+      </div>
+      <select id="statusFilter" class="select" aria-label="Filter by status">
+        <option value="all">All Status</option>
+        <option value="remaining">Remaining</option>
+        <option value="doing">Doing</option>
+        <option value="completed">Completed</option>
+        <option value="skip">Don't want to do</option>
+      </select>
+      <select id="categoryFilter" class="select" aria-label="Filter by category">
+        <option value="all">All Categories</option>
+        <option value="bumper">Bumper</option>
+        <option value="major">Major</option>
+        <option value="minor">Minor</option>
+      </select>
+    </div>
+
+    <div class="status-chips" id="statusChips" role="tablist" aria-label="Quick status filter">
+      <button type="button" class="chip active" data-status="all" role="tab" aria-selected="true">
+        All <span class="chip-count" id="chipCountAll">0</span>
+      </button>
+      <button type="button" class="chip" data-status="remaining" role="tab" aria-selected="false">
+        ⏳ Remaining <span class="chip-count" id="chipCountRemaining">0</span>
+      </button>
+      <button type="button" class="chip" data-status="doing" role="tab" aria-selected="false">
+        ⚡ Doing <span class="chip-count" id="chipCountDoing">0</span>
+      </button>
+      <button type="button" class="chip" data-status="completed" role="tab" aria-selected="false">
+        ✓ Completed <span class="chip-count" id="chipCountCompleted">0</span>
+      </button>
+      <button type="button" class="chip" data-status="skip" role="tab" aria-selected="false">
+        ⊘ Excluded <span class="chip-count" id="chipCountSkip">0</span>
+      </button>
+    </div>
   </div>
 
   <form class="topic-form" id="topicForm">
@@ -880,6 +1594,59 @@ dialog { border: 0; }
     </div>
   </dialog>
 
+  <dialog id="backupRestoreDialog">
+    <form class="edit-form" id="backupRestoreForm">
+      <h2 id="backupRestoreTitle">Backup & Restore</h2>
+      <p style="margin: 0 0 16px; font-size: 13.5px; color: var(--muted); line-height: 1.5;">
+        Create a complete backup of your data or restore from a previous backup.
+      </p>
+
+      <div style="display: grid; gap: 12px;">
+        <button class="btn" type="button" id="createBackupBtn">
+          📦 Create New Backup
+        </button>
+        <p style="font-size: 12px; color: var(--muted); margin: -8px 0 0 0;">
+          Download a complete JSON backup of all your data.
+        </p>
+
+        <button class="btn" type="button" id="restoreFromBackupBtn">
+          📥 Restore from Backup
+        </button>
+        <p style="font-size: 12px; color: var(--muted); margin: -8px 0 0 0;">
+          Import data from a previously saved backup file.
+        </p>
+      </div>
+
+      <div id="backupHistorySection" style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <h3 style="font-size: 14px; margin: 0 0 12px;">Recent Backups</h3>
+        <ul class="topic-list" id="backupHistoryList" style="max-height: 200px;"></ul>
+        <button class="btn" type="button" id="clearBackupHistoryBtn" style="font-size: 12px; margin-top: 8px;">
+          Clear Old Backups
+        </button>
+      </div>
+
+      <div class="edit-form-actions" style="margin-top: 16px;">
+        <button class="btn" id="closeBackupRestore" type="button">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirmRestoreDialog">
+    <form class="edit-form" id="confirmRestoreForm">
+      <h2>⚠️ Confirm Restore</h2>
+      <p style="margin: 0 0 16px; font-size: 13.5px; color: var(--muted); line-height: 1.5;">
+        Restoring will replace your current data. A backup of your current state will be created first.
+      </p>
+      <div id="restoreBackupInfo" style="background: var(--surface-soft); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 13px;">
+        <!-- Backup info will be inserted here -->
+      </div>
+      <div class="edit-form-actions">
+        <button class="btn" id="cancelRestore" type="button">Cancel</button>
+        <button class="btn danger" type="submit">Confirm Restore</button>
+      </div>
+    </form>
+  </dialog>
+
   <main id="topics"></main>
 </div>
 
@@ -888,6 +1655,13 @@ dialog { border: 0; }
   <button type="button" data-theme-choice="dark" aria-pressed="false">☾ Dark</button>
 </div>
 
+<script src="data-protection.js"></script>
+<script src="undo-system.js"></script>
+<script src="study-sessions.js"></script>
+<script src="study-planner.js"></script>
+<script src="analytics.js"></script>
+<script src="exam-readiness.js"></script>
+<script src="focus-tools.js"></script>
 <script>
 const themeButtons = document.querySelectorAll("[data-theme-choice]");
 const setTheme = theme => {
@@ -1141,6 +1915,13 @@ if (!desktopApi) {
   document.getElementById("changeSaveLocationBtn").hidden = true;
 }
 
+// Initialize Undo System
+let undoManager;
+if (window.UndoSystem) {
+  undoManager = new window.UndoSystem.UndoManager();
+  undoManager.onUndo(handleUndoAction);
+}
+
 const androidFilesReady = !desktopApi && window.Capacitor
   ? new Promise((resolve, reject) => {
       const bridge = document.createElement("script");
@@ -1162,6 +1943,32 @@ const saveTrackerData = async data => {
   localStorage.setItem("csir-tracker-data", JSON.stringify(data));
 };
 
+let updateUndoBtn = () => {};
+
+// Undo action handler
+function handleUndoAction(action) {
+  if (!action || !action.restore) return;
+
+  try {
+    action.restore();
+    document.getElementById("deadlineInput").value = deadline;
+    syncLectureDeadlineInput();
+    updateGreeting();
+    updateCountdown();
+    render();
+    save().then(saved => {
+      if (!saved) {
+        alert("❌ Failed to save after undo.");
+      }
+    });
+    updateUndoBtn();
+  } catch (error) {
+    console.error("Undo failed:", error);
+    alert(`Could not undo: ${error.message}`);
+  }
+}
+
+// Save function with undo tracking
 const save = async () => {
   render();
   try {
@@ -1173,6 +1980,26 @@ const save = async () => {
     return false;
   }
 };
+
+// Track action for undo
+function trackUndo(actionType, description, previousState) {
+  if (!undoManager) return;
+
+  undoManager.pushAction({
+    type: actionType,
+    description: description,
+    timestamp: Date.now(),
+    restore: () => {
+      // Restore previous state
+      if (previousState.topics !== undefined) TOPICS = JSON.parse(JSON.stringify(previousState.topics));
+      if (previousState.state !== undefined) state = JSON.parse(JSON.stringify(previousState.state));
+      if (previousState.username !== undefined) username = previousState.username;
+      if (previousState.deadline !== undefined) deadline = previousState.deadline;
+      if (previousState.lectureDeadline !== undefined) lectureDeadline = previousState.lectureDeadline;
+    }
+  });
+  updateUndoBtn();
+}
 
 const CSV_HEADERS = ["id", "topic", "category", "marks", "status", "lectures", "pyq", "revision", "test", "note"];
 const REQUIRED_CSV_HEADERS = CSV_HEADERS.filter(header => header !== "note" && header !== "lectures");
@@ -1298,11 +2125,12 @@ const importCsv = async file => {
     const imported = {};
 
     rows.forEach((row, rowIndex) => {
-      if (row.length !== headers.length) {
+      if (row.length > headers.length) {
         throw new Error(`CSV row ${rowIndex + 2} has ${row.length} fields; expected ${headers.length}.`);
       }
 
-      const value = header => row[column[header]];
+      const normalizedRow = [...row, ...Array.from({ length: headers.length - row.length }, () => "")];
+      const value = header => normalizedRow[column[header]] ?? "";
       const id = value("id");
       const name = value("topic").trim();
       const category = value("category");
@@ -1318,11 +2146,10 @@ const importCsv = async file => {
       }
 
       const parseBoolean = header => {
-        const field = value(header).toLowerCase();
-        if (field !== "true" && field !== "false") {
-          throw new Error(`CSV row ${rowIndex + 2} has an invalid ${header} value.`);
-        }
-        return field === "true";
+        const field = (value(header) ?? "").trim().toLowerCase();
+        if (field === "" || field === "false") return false;
+        if (field === "true") return true;
+        throw new Error(`CSV row ${rowIndex + 2} has an invalid ${header} value.`);
       };
 
       imported[id] = {
@@ -1441,6 +2268,9 @@ function render(){
   const q=document.getElementById("search").value.trim().toLowerCase();
   const sf=document.getElementById("statusFilter").value;
   const cf=document.getElementById("categoryFilter").value;
+  const clearBtn = document.getElementById("clearSearchBtn");
+  if (clearBtn) clearBtn.hidden = !q;
+
   const filtered=TOPICS.filter(t=>{
     const s=get(t).status;
     return (!q||t.name.toLowerCase().includes(q))&&(sf==="all"||s===sf)&&(cf==="all"||t.cat===cf);
@@ -1478,7 +2308,7 @@ function render(){
                 <label><input type="checkbox" data-id="${t.id}" data-field="pyq" ${s.pyq?"checked":""}> PYQ</label>
                 <label><input type="checkbox" data-id="${t.id}" data-field="revision" ${s.revision?"checked":""}> Revision</label>
                 <label><input type="checkbox" data-id="${t.id}" data-field="test" ${s.test?"checked":""}> Unit Test</label>
-                ${!isInactive ? `<div class="lecture-tracker" title="Remaining lectures to watch for this topic">
+                ${!isInactive ? `<div class="lecture-tracker" title="Remaining lectures to watch for this topic (Shift+Click for ±5)">
                   <span class="lecture-label">📺 Lectures:</span>
                   <div class="lecture-stepper">
                     <button class="lecture-btn minus" type="button" data-id="${t.id}" ${lectures <= 0 ? "disabled" : ""} aria-label="Decrease remaining lectures" title="Decrease remaining lectures">−</button>
@@ -1501,7 +2331,7 @@ function render(){
             </div>
           </div>
           <div class="topic-actions">
-            <button class="btn note-topic-btn" type="button" data-id="${esc(t.id)}" aria-label="${s.note ? "View or edit" : "Add"} note for ${esc(t.name)}" title="${s.note ? "View or edit note" : "Add note"}">📝 Note</button>
+            <button class="btn note-topic-btn" type="button" data-id="${esc(t.id)}" aria-label="${s.note ? "View or edit" : "Add"} note for ${esc(t.name)}" title="${s.note ? "View or edit note" : "Add note"}">📝 Note${s.note ? ' <span class="note-indicator" title="Has saved note">●</span>' : ""}</button>
             <button class="btn edit-topic-btn" type="button" data-id="${esc(t.id)}">Edit</button>
             <button class="btn danger remove-topic-btn" type="button" data-id="${esc(t.id)}">Remove</button>
           </div>
@@ -1518,6 +2348,12 @@ function render(){
       sectionOpen[section.dataset.cat]=!section.classList.contains("closed");
     };
     head.addEventListener("click",toggle);
+    head.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggle();
+      }
+    });
   });
 
   updateStats();
@@ -1679,7 +2515,47 @@ let dataMsg = "";
   if (completedPyqEl) completedPyqEl.textContent = completedPyq;
   if (completedRevisionEl) completedRevisionEl.textContent = completedRevision;
 
+  // Sync interactive status chips
+  const remTopicsCount = TOPICS.filter(t => get(t).status === "remaining").length;
+  const cAll = document.getElementById("chipCountAll");
+  const cRemaining = document.getElementById("chipCountRemaining");
+  const cDoing = document.getElementById("chipCountDoing");
+  const cCompleted = document.getElementById("chipCountCompleted");
+  const cSkip = document.getElementById("chipCountSkip");
+  if (cAll) cAll.textContent = TOPICS.length;
+  if (cRemaining) cRemaining.textContent = remTopicsCount;
+  if (cDoing) cDoing.textContent = doing.length;
+  if (cCompleted) cCompleted.textContent = completed.length;
+  if (cSkip) cSkip.textContent = skipped.length;
+
+  const sf = document.getElementById("statusFilter") ? document.getElementById("statusFilter").value : "all";
+  document.querySelectorAll(".status-chips .chip").forEach(chip => {
+    const isActive = chip.dataset.status === sf;
+    chip.classList.toggle("active", isActive);
+    chip.setAttribute("aria-selected", String(isActive));
+  });
+
   updateLectureStats();
+  syncAndroidWidget();
+}
+
+function syncAndroidWidget() {
+  if (typeof window !== "undefined" && window.AndroidWidgetBridge && typeof window.AndroidWidgetBridge.syncCountdown === "function") {
+    try {
+      const eligibleTotal = TOPICS.filter(t => get(t).status !== "skip").reduce((sum, t) => sum + t.marks, 0);
+      const completed = TOPICS.filter(t => get(t).status === "completed");
+      const covered = completed.reduce((sum, t) => sum + t.marks, 0);
+      const pct = eligibleTotal ? (covered / eligibleTotal * 100) : 0;
+      const activeTopics = TOPICS.filter(t => {
+        const s = get(t);
+        return s.status !== "completed" && s.status !== "skip";
+      });
+      const remLectures = activeTopics.reduce((sum, t) => sum + (Math.max(0, parseInt(get(t).lectures, 10) || 0)), 0);
+      window.AndroidWidgetBridge.syncCountdown(deadline, lectureDeadline || deadline, pct, remLectures);
+    } catch (e) {
+      console.warn("Android widget sync error:", e);
+    }
+  }
 }
 
 function getDaysUntilTarget(targetStr) {
@@ -1758,8 +2634,18 @@ document.addEventListener("change",e=>{
  if(el.type === "checkbox") {
    const id=el.dataset.id, field=el.dataset.field;
    if(!id||!field)return;
+   const topic = TOPICS.find(item => item.id === id);
+   const fieldNames = { pyq: "PYQ", revision: "Revision", test: "Unit Test" };
+   const previousState = {
+     topics: JSON.parse(JSON.stringify(TOPICS)),
+     state: JSON.parse(JSON.stringify(state)),
+     username,
+     deadline,
+     lectureDeadline
+   };
    state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0},state[id]||{});
    state[id][field]=el.checked;
+   trackUndo("checkbox_toggle", `${el.checked ? "Checked" : "Unchecked"} ${fieldNames[field] || field} for "${topic ? topic.name : id}"`, previousState);
    save();
  }
  if(el.classList.contains("lecture-input")) {
@@ -1768,10 +2654,28 @@ document.addEventListener("change",e=>{
    if (!topic) return;
    const s = get(topic);
    if (s.status === "completed" || s.status === "skip") return;
-   const val = Math.max(0, parseInt(el.value, 10) || 0);
-   state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0},state[id]||{});
-   state[id].lectures = val;
-   save();
+   const previousLectures = Math.max(0, parseInt(s.lectures, 10) || 0);
+   const val = Math.min(999, Math.max(0, parseInt(el.value, 10) || 0));
+   el.value = val;
+   if (val !== previousLectures) {
+     const previousState = {
+       topics: JSON.parse(JSON.stringify(TOPICS)),
+       state: JSON.parse(JSON.stringify(state)),
+       username,
+       deadline,
+       lectureDeadline
+     };
+     state[id]=Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0},state[id]||{});
+     state[id].lectures = val;
+     if (val === 0 && previousLectures > 0) {
+       state[id].status = "completed";
+       celebrateCompletion(window.innerWidth / 2, window.innerHeight / 2);
+     } else if (previousLectures === 0 && val > 0 && s.status === "completed") {
+       state[id].status = "remaining";
+     }
+     trackUndo("lecture_input", `Changed lectures for "${topic.name}" (${previousLectures} → ${val})`, previousState);
+     save();
+   }
  }
 });
 
@@ -1793,18 +2697,34 @@ document.addEventListener("click", e=>{
     const s = get(topic);
     if (s.status === "completed" || s.status === "skip") return;
     const currentLectures = Math.max(0, parseInt(s.lectures, 10) || 0);
+    const step = e.shiftKey ? 5 : 1;
+
+    const previousState = {
+      topics: JSON.parse(JSON.stringify(TOPICS)),
+      state: JSON.parse(JSON.stringify(state)),
+      username,
+      deadline,
+      lectureDeadline
+    };
+
     state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0}, state[id]||{});
     if (el.classList.contains("minus")) {
       if (currentLectures <= 0) return;
-      const newLectures = currentLectures - 1;
+      const newLectures = Math.max(0, currentLectures - step);
       state[id].lectures = newLectures;
-      if (newLectures === 0) {
+      if (newLectures === 0 && currentLectures > 0) {
         state[id].status = "completed";
         celebrateCompletion(e.clientX, e.clientY);
       }
+      trackUndo("lecture_decrement", `Decreased lectures for "${topic.name}" (${currentLectures} → ${newLectures})`, previousState);
       save();
     } else if (el.classList.contains("plus")) {
-      state[id].lectures = currentLectures + 1;
+      const newLectures = Math.min(999, currentLectures + step);
+      state[id].lectures = newLectures;
+      if (currentLectures === 0 && newLectures > 0 && s.status === "completed") {
+        state[id].status = "remaining";
+      }
+      trackUndo("lecture_increment", `Increased lectures for "${topic.name}" (${currentLectures} → ${newLectures})`, previousState);
       save();
     }
     return;
@@ -1838,9 +2758,19 @@ document.addEventListener("click", e=>{
     if (!topic || !confirm(`Remove "${topic.name}" and its saved progress?`)) return;
     const previousTopics = TOPICS;
     const previousState = state;
+
+    const undoState = {
+      topics: JSON.parse(JSON.stringify(TOPICS)),
+      state: JSON.parse(JSON.stringify(state)),
+      username,
+      deadline,
+      lectureDeadline
+    };
+
     TOPICS = TOPICS.filter(item => item.id !== id);
     state = { ...state };
     delete state[id];
+    trackUndo("remove_topic", `Removed topic "${topic.name}"`, undoState);
     save().then(saved => {
       if (!saved) {
         TOPICS = previousTopics;
@@ -1855,9 +2785,20 @@ document.addEventListener("click", e=>{
     const field = el.dataset.field;
     const val = el.dataset.value;
     if(!id || !field) return;
+    const topic = TOPICS.find(item => item.id === id);
+    const statusLabels = { remaining: "Remaining", doing: "In progress", completed: "Completed", skip: "Excluded" };
     state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0}, state[id]||{});
     const previousStatus = state[id][field];
+    if (previousStatus === val) return;
+    const previousState = {
+      topics: JSON.parse(JSON.stringify(TOPICS)),
+      state: JSON.parse(JSON.stringify(state)),
+      username,
+      deadline,
+      lectureDeadline
+    };
     state[id][field] = val;
+    trackUndo("status_change", `Status set to ${statusLabels[val] || val} for "${topic ? topic.name : id}"`, previousState);
     save().then(saved => {
       if (saved && field === "status" && val === "completed" && previousStatus !== "completed") {
         celebrateCompletion(e.clientX, e.clientY);
@@ -1948,17 +2889,25 @@ document.getElementById("topicNoteForm").addEventListener("submit", async event 
     return;
   }
 
-  const previousState = state;
+  const topic = TOPICS.find(t => t.id === topicId);
+  const previousState = {
+    topics: JSON.parse(JSON.stringify(TOPICS)),
+    state: JSON.parse(JSON.stringify(state)),
+    username,
+    deadline,
+    lectureDeadline
+  };
   state = { ...state };
   state[topicId] = Object.assign(
     { status: "remaining", pyq: false, revision: false, test: false },
     state[topicId] || {},
     { note }
   );
+  trackUndo("edit_note", `Updated note for "${topic ? topic.name : topicId}"`, previousState);
   if (await save()) {
     document.getElementById("topicNoteDialog").close();
   } else {
-    state = previousState;
+    state = previousState.state;
     render();
   }
 });
@@ -1996,23 +2945,53 @@ document.getElementById("editTopicForm").addEventListener("submit", async event 
     return;
   }
 
-  const previousTopics = TOPICS;
-  const previousState = state;
+  const previousState = {
+    topics: JSON.parse(JSON.stringify(TOPICS)),
+    state: JSON.parse(JSON.stringify(state)),
+    username,
+    deadline,
+    lectureDeadline
+  };
   TOPICS = TOPICS.map(topic => topic.id === topicId
     ? { ...topic, name, marks, cat }
     : topic);
   state = { ...state };
   state[topicId] = Object.assign({ status: "remaining", pyq: false, revision: false, test: false, lectures: 0 }, state[topicId] || {}, { lectures });
+  trackUndo("edit_topic", `Edited topic "${name}"`, previousState);
   if (await save()) {
     document.getElementById("editTopicDialog").close();
   } else {
-    TOPICS = previousTopics;
-    state = previousState;
+    TOPICS = previousState.topics;
+    state = previousState.state;
     render();
   }
 });
 
 ["search","statusFilter","categoryFilter"].forEach(id=>document.getElementById(id).addEventListener(id==="search"?"input":"change",render));
+
+const clearSearchBtn = document.getElementById("clearSearchBtn");
+if (clearSearchBtn) {
+  clearSearchBtn.addEventListener("click", () => {
+    const searchInput = document.getElementById("search");
+    if (searchInput) {
+      searchInput.value = "";
+      clearSearchBtn.hidden = true;
+      searchInput.focus();
+      render();
+    }
+  });
+}
+
+document.querySelectorAll(".status-chips .chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const status = chip.dataset.status;
+    const filter = document.getElementById("statusFilter");
+    if (filter) {
+      filter.value = status;
+      render();
+    }
+  });
+});
 
 document.getElementById("resetBtn").addEventListener("click",()=>{
  if(confirm("Are you sure you want to completely erase your saved desktop data?")){
@@ -2030,6 +3009,197 @@ document.getElementById("importCsvFile").addEventListener("change", event => {
   if (file) importCsv(file);
   event.currentTarget.value = "";
 });
+// Initialize Data Protection
+let dataProtection;
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.CSIRDataProtection) {
+    dataProtection = new window.CSIRDataProtection.DataProtection();
+  }
+});
+
+// Backup/Restore handlers
+let pendingRestoreData = null;
+
+function openBackupRestoreDialog() {
+  document.getElementById("backupRestoreDialog").showModal();
+  updateBackupHistoryList();
+}
+
+function updateBackupHistoryList() {
+  const list = document.getElementById("backupHistoryList");
+  if (!dataProtection || !list) return;
+
+  const history = dataProtection.getBackupHistory();
+  if (!history.length) {
+    list.innerHTML = '<li class="topic-list-empty">No backups yet. Create one to protect your data.</li>';
+    return;
+  }
+
+  list.innerHTML = history.slice(0, 5).map(backup => {
+    const date = new Date(backup.timestamp);
+    const dateStr = date.toLocaleDateString(undefined, {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+    });
+    return `<li>
+      <span class="topic-list-name">${dateStr}</span>
+      <span class="topic-list-meta">${backup.topicCount} topics · ${backup.mode}</span>
+    </li>`;
+  }).join("");
+}
+
+async function createBackup() {
+  if (!dataProtection) {
+    alert("Backup system not available.");
+    return;
+  }
+
+  const currentData = { topics: TOPICS, progress: state, username, deadline, lectureDeadline };
+  const success = await dataProtection.exportJsonBackup(currentData);
+
+  if (success) {
+    alert("✅ Backup created successfully!");
+    updateBackupHistoryList();
+  } else {
+    alert("❌ Failed to create backup.");
+  }
+}
+
+async function processBackupContent(fileOrContent) {
+  if (!dataProtection) {
+    alert("Backup system not available.");
+    return;
+  }
+
+  try {
+    const result = await dataProtection.importJsonBackup(fileOrContent);
+
+    if (result.success) {
+      // Show confirmation dialog
+      const infoDiv = document.getElementById("restoreBackupInfo");
+      infoDiv.innerHTML = `
+        <strong>Backup Date:</strong> ${new Date(result.metadata.timestamp).toLocaleString()}<br>
+        <strong>Topics:</strong> ${result.data.topics?.length || 0}<br>
+        <strong>Version:</strong> ${result.metadata.version}
+      `;
+      pendingRestoreData = result;
+      document.getElementById("confirmRestoreDialog").showModal();
+    } else {
+      alert(`❌ Restore failed: ${result.message}`);
+    }
+  } catch (error) {
+    alert(`❌ Failed to read backup file: ${error.message}`);
+  }
+}
+
+async function triggerRestoreFromFile() {
+  if (desktopApi?.importJson) {
+    try {
+      const content = await desktopApi.importJson();
+      if (content) await processBackupContent(content);
+    } catch (err) {
+      alert(`❌ Failed to open backup file: ${err.message}`);
+    }
+  } else {
+    document.getElementById("importBackupFile").click();
+  }
+}
+
+async function handleRestoreFromFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = "";
+  await processBackupContent(file);
+}
+
+async function confirmRestore() {
+  if (!pendingRestoreData || !pendingRestoreData.data) return;
+
+  // Auto-backup current state before restoring
+  if (dataProtection) {
+    dataProtection.autoBackup({ topics: TOPICS, progress: state, username, deadline, lectureDeadline });
+  }
+
+  // Apply restored data
+  const restored = pendingRestoreData.data;
+
+  const previousTopics = TOPICS;
+  const previousState = state;
+  const previousUsername = username;
+  const previousDeadline = deadline;
+  const previousLectureDeadline = lectureDeadline;
+
+  TOPICS = restored.topics || [];
+  state = restored.progress || {};
+  username = restored.username || "";
+  deadline = restored.deadline || "";
+  lectureDeadline = restored.lectureDeadline || "";
+
+  if (await save()) {
+    document.getElementById("confirmRestoreDialog").close();
+    document.getElementById("backupRestoreDialog").close();
+    document.getElementById("deadlineInput").value = deadline;
+    syncLectureDeadlineInput();
+    updateCountdown();
+    updateGreeting();
+    render();
+    alert("✅ Data restored successfully!");
+  } else {
+    // Rollback on save failure
+    TOPICS = previousTopics;
+    state = previousState;
+    username = previousUsername;
+    deadline = previousDeadline;
+    lectureDeadline = previousLectureDeadline;
+    alert("❌ Failed to save restored data.");
+  }
+
+  pendingRestoreData = null;
+}
+
+function cancelRestore() {
+  document.getElementById("confirmRestoreDialog").close();
+  pendingRestoreData = null;
+}
+
+function clearOldBackups() {
+  if (dataProtection && confirm("Clear old backup history? This will keep only the 5 most recent backups.")) {
+    dataProtection.cleanupOldBackups(5);
+    updateBackupHistoryList();
+    alert("Old backups cleared.");
+  }
+}
+
+// Attach backup/restore event listeners
+document.addEventListener("DOMContentLoaded", () => {
+  // Delay to ensure elements are available
+  setTimeout(() => {
+    const backupBtn = document.getElementById("backupBtn");
+    const restoreBtn = document.getElementById("restoreBtn");
+    const createBackupBtn = document.getElementById("createBackupBtn");
+    const restoreFromBackupBtn = document.getElementById("restoreFromBackupBtn");
+    const clearBackupHistoryBtn = document.getElementById("clearBackupHistoryBtn");
+    const closeBackupRestoreBtn = document.getElementById("closeBackupRestore");
+    const cancelRestoreBtn = document.getElementById("cancelRestore");
+    const confirmRestoreForm = document.getElementById("confirmRestoreForm");
+    const importBackupFile = document.getElementById("importBackupFile");
+
+    if (backupBtn) backupBtn.addEventListener("click", openBackupRestoreDialog);
+    if (restoreBtn) restoreBtn.addEventListener("click", openBackupRestoreDialog);
+    if (createBackupBtn) createBackupBtn.addEventListener("click", createBackup);
+    if (restoreFromBackupBtn) restoreFromBackupBtn.addEventListener("click", triggerRestoreFromFile);
+    if (clearBackupHistoryBtn) clearBackupHistoryBtn.addEventListener("click", clearOldBackups);
+    if (closeBackupRestoreBtn) closeBackupRestoreBtn.addEventListener("click", () => {
+      document.getElementById("backupRestoreDialog").close();
+    });
+    if (cancelRestoreBtn) cancelRestoreBtn.addEventListener("click", cancelRestore);
+    if (confirmRestoreForm) confirmRestoreForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      confirmRestore();
+    });
+    if (importBackupFile) importBackupFile.addEventListener("change", handleRestoreFromFile);
+  }, 100);
+});
+
 document.getElementById("changeSaveLocationBtn").addEventListener("click", async () => {
   if (!desktopApi) return;
   try {
@@ -2078,6 +3248,86 @@ document.getElementById("lectureDeadlineInput").addEventListener("change", async
   }
 });
 
+function togglePlanner() {
+  const body = document.getElementById("plannerBody");
+  const section = document.getElementById("plannerSection");
+  if (body) body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  if (section) section.classList.toggle('closed');
+}
+
+function generatePlan() {
+  // Calculate days to deadline
+  const deadlineVal = document.getElementById("deadlineInput").value;
+  const daysLeft = deadlineVal ? Math.max(0, Math.ceil((new Date(deadlineVal + 'T00:00:00') - new Date()) / 86400000)) : 30;
+
+  if (!window.StudyPlannerModule) {
+    document.getElementById("plannerRecommendations").innerHTML = '<p style="color: var(--muted)">Planner module not loaded.</p>';
+    return;
+  }
+
+  const { PlannerEngine } = window.StudyPlannerModule;
+  const progress = {};
+  TOPICS.forEach(t => {
+    progress[t.id] = get(t); // Get current progress
+  });
+
+  // Get recommendations
+  const recommendations = PlannerEngine.recommendNextTopics(TOPICS, progress, daysLeft, []);
+  const readiness = PlannerEngine.getExamReadiness(TOPICS, progress, daysLeft);
+
+  // Display recommendations
+  const topRecs = recommendations.recommendations.slice(0, 5);
+  const recHtml = topRecs.length ? `
+    <h3 style="margin: 0 0 10px; font-size: 15px;">📋 Top Priority Topics</h3>
+    <div style="display: grid; gap: 8px;">
+      ${topRecs.map(r => `
+        <div style="background: var(--surface-soft); padding: 12px; border-radius: var(--radius-sm); border-left: 4px solid ${r.priority.recommendation === 'high_priority' ? 'var(--danger)' : r.priority.recommendation === 'near_completion' ? 'var(--doing)' : 'var(--accent)'};">
+          <div style="font-weight: 600; font-size: 14px;">${r.name}</div>
+          <div style="font-size: 12px; color: var(--muted);">${r.cat} · ${r.marks} marks · ${r.priority.recommendation}</div>
+          <div style="font-size: 13px; margin-top: 4px; color: var(--text);">${r.priority.reason}</div>
+          <div style="font-size: 12px; color: var(--accent); margin-top: 4px;">→ ${r.priority.details.urgency} urgency, score: ${(r.priority.score || 0).toFixed(2)}</div>
+        </div>
+      `).join('')}
+    </div>
+  ` : '<p style="color: var(--muted)">No recommendations available.</p>';
+
+  document.getElementById("plannerRecommendations").innerHTML = recHtml;
+
+  // Weak topics
+  let weakHtml = '';
+  if (readiness.weakTopics && readiness.weakTopics.length > 0) {
+    weakHtml = `
+      <h3 style="margin: 16px 0 10px; font-size: 15px;">⚠️ Weak Topics (High Marks + Low Progress)</h3>
+      <ul style="margin: 0; padding-left: 16px; font-size: 13px; color: var(--text);">
+        ${readiness.weakTopics.map(w => `
+          <li><strong>${w.name}</strong> (${w.marks} marks) — progress ${(w.progressRatio * 100).toFixed(0)}%</li>
+        `).join('')}
+      </ul>
+    `;
+  }
+  document.getElementById("plannerWeakTopics").innerHTML = weakHtml;
+
+  // Readiness
+  document.getElementById("plannerReadiness").innerHTML = `
+    <h3 style="margin: 16px 0 10px; font-size: 15px;">📊 Exam Readiness: ${readiness.readinessLevel.toUpperCase()}</h3>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px;">
+      <span style="padding: 6px 12px; background: var(--surface-soft); border-radius: 999px;">${readiness.completionRate.toFixed(1)}% coverage</span>
+      <span style="padding: 6px 12px; background: var(--surface-soft); border-radius: 999px;">${readiness.completedTopics} completed</span>
+      <span style="padding: 6px 12px; background: var(--surface-soft); border-radius: 999px;">${daysLeft} days to exam</span>
+      <span style="padding: 6px 12px; background: var(--surface-soft); border-radius: 999px;">${readiness.inProgressTopics} in progress</span>
+    </div>
+    <div style="margin-top: 8px; font-size: 12px; color: var(--muted);">${readiness.recommendations.join(' • ')}</div>
+  `;
+}
+
+// Initialize planner on load
+document.addEventListener("DOMContentLoaded", () => {
+  // Auto-generate on first load if data loaded
+  setTimeout(() => {
+    if (TOPICS.length > 0) generatePlan();
+  }, 500);
+});
+
 document.getElementById("topicForm").addEventListener("submit", async event => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -2091,15 +3341,21 @@ document.getElementById("topicForm").addEventListener("submit", async event => {
   }
 
   const topic = { id: `custom-${crypto.randomUUID()}`, name, cat, marks };
-  const previousTopics = TOPICS;
-  const previousState = state;
+  const previousState = {
+    topics: JSON.parse(JSON.stringify(TOPICS)),
+    state: JSON.parse(JSON.stringify(state)),
+    username,
+    deadline,
+    lectureDeadline
+  };
   TOPICS = [...TOPICS, topic];
   state = { ...state };
   state[topic.id] = { status: "remaining", pyq: false, revision: false, test: false, lectures };
+  trackUndo("add_topic", `Added topic "${name}"`, previousState);
   if (await save()) form.reset();
   else {
-    TOPICS = previousTopics;
-    state = previousState;
+    TOPICS = previousState.topics;
+    state = previousState.state;
   }
   render();
 });
@@ -2127,6 +3383,7 @@ function updateCountdown() {
   document.getElementById("countdownTimer").textContent = formatDeadlineCountdown(deadline);
   document.getElementById("lectureCountdownTimer").textContent = formatDeadlineCountdown(lectureDeadline || deadline);
   updateLectureStats();
+  syncAndroidWidget();
 }
 
 updateCountdown();
@@ -2134,6 +3391,203 @@ setInterval(updateCountdown, 1000);
 
 // START
 loadData();
+
+// Initialize keyboard shortcuts
+function initKeyboardShortcuts() {
+  document.addEventListener("keydown", (event) => {
+    // Ctrl/Cmd + Z for undo
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
+      if (!event.target.matches("input, textarea")) {
+        event.preventDefault();
+        if (undoManager && undoManager.canUndo()) {
+          undoManager.undo();
+          updateUndoBtn();
+        }
+      }
+    }
+
+    // Escape to close dialogs or clear search
+    if (event.key === "Escape") {
+      const openDialog = document.querySelector("dialog[open]");
+      if (openDialog) {
+        openDialog.close();
+      } else {
+        const searchInput = document.getElementById("search");
+        if (searchInput && (searchInput === document.activeElement || searchInput.value)) {
+          searchInput.value = "";
+          searchInput.blur();
+          render();
+        }
+      }
+    }
+
+    // Focus search with Ctrl/Cmd + K or "/" when outside inputs
+    if (
+      ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") ||
+      (event.key === "/" && !event.target.matches("input, textarea, select"))
+    ) {
+      event.preventDefault();
+      const searchInput = document.getElementById("search");
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+
+    // Add new topic with Ctrl/Cmd + N
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "n") {
+      if (!event.target.matches("input, textarea")) {
+        event.preventDefault();
+        const nameInput = document.querySelector(".topic-form input[name='name']");
+        if (nameInput) {
+          nameInput.focus();
+          nameInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    }
+
+    // Export CSV with Ctrl/Cmd + E
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "e") {
+      if (!event.target.matches("input, textarea")) {
+        event.preventDefault();
+        exportCsv();
+      }
+    }
+  });
+}
+
+// Initialize undo button
+function initUndoButton() {
+  const undoBtn = document.getElementById("undoBtn");
+  if (undoBtn && undoManager) {
+    updateUndoBtn = () => {
+      const can = undoManager.canUndo();
+      undoBtn.disabled = !can;
+      undoBtn.title = can ? "Undo last action (Ctrl+Z)" : "Nothing to undo";
+    };
+
+    undoBtn.addEventListener("click", () => {
+      if (undoManager.canUndo()) {
+        undoManager.undo();
+        updateUndoBtn();
+      }
+    });
+
+    setInterval(updateUndoBtn, 800);
+    updateUndoBtn();
+  }
+}
+
+// Keyboard navigation for lecture counter
+function initLectureKeyboardNavigation() {
+  document.addEventListener("keydown", (event) => {
+    const target = event.target;
+    if (!target.classList.contains("lecture-input")) return;
+
+    const id = target.dataset.id;
+    if (!id) return;
+
+    const topic = TOPICS.find(item => item.id === id);
+    if (!topic) return;
+
+    const s = get(topic);
+    if (s.status === "completed" || s.status === "skip") return;
+
+    let handled = false;
+    let newValue = Math.max(0, parseInt(target.value, 10) || 0);
+    const step = event.shiftKey ? 5 : 1;
+
+    switch (event.key) {
+      case "ArrowUp":
+        newValue = Math.min(999, newValue + step);
+        handled = true;
+        break;
+      case "ArrowDown":
+        newValue = Math.max(0, newValue - step);
+        handled = true;
+        break;
+      case "PageUp":
+        newValue = Math.min(999, newValue + 5);
+        handled = true;
+        break;
+      case "PageDown":
+        newValue = Math.max(0, newValue - 5);
+        handled = true;
+        break;
+      case "Home":
+        newValue = 0;
+        handled = true;
+        break;
+      case "End":
+        newValue = 999;
+        handled = true;
+        break;
+      case "Enter":
+        target.blur();
+        handled = true;
+        break;
+    }
+
+    if (handled) {
+      event.preventDefault();
+      const previousLectures = Math.max(0, parseInt(s.lectures, 10) || 0);
+      if (newValue !== previousLectures) {
+        const previousState = {
+          topics: JSON.parse(JSON.stringify(TOPICS)),
+          state: JSON.parse(JSON.stringify(state)),
+          username,
+          deadline,
+          lectureDeadline
+        };
+        trackUndo("lecture_change", `Changed lectures for "${topic.name}" (${previousLectures} → ${newValue})`, previousState);
+
+        state[id] = Object.assign({status:"remaining",pyq:false,revision:false,test:false,lectures:0}, state[id]||{});
+        state[id].lectures = newValue;
+        target.value = newValue;
+
+        if (newValue === 0 && previousLectures > 0) {
+          state[id].status = "completed";
+          celebrateCompletion(event.clientX, event.clientY);
+        } else if (previousLectures === 0 && newValue > 0 && s.status === "completed") {
+          state[id].status = "remaining";
+        }
+
+        save().then(saved => {
+          if (!saved) {
+            // Restore on failure
+            state[id].lectures = previousLectures;
+            target.value = previousLectures;
+            if (previousLectures === 0 && newValue > 0) {
+              state[id].status = "completed";
+            }
+          }
+        });
+      }
+    }
+  });
+}
+
+// Initialize all keyboard and undo features
+document.addEventListener("DOMContentLoaded", () => {
+  initKeyboardShortcuts();
+  initUndoButton();
+  initLectureKeyboardNavigation();
+});
+
+// Automatically select the entire lecture count when focused
+document.addEventListener("focusin", function (event) {
+    if (event.target.classList.contains("lecture-input")) {
+        event.target.select();
+    }
+});
+
+// Also select on touch/click for easier mobile and desktop editing
+document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("lecture-input")) {
+        event.target.select();
+    }
+});
+
 </script>
 </body>
 </html>

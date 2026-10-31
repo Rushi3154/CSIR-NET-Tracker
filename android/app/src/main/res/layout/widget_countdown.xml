@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:gravity="center_vertical">
+
+    <!-- Header: App Name & Target Date -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🧪 CSIR-NET"
+            android:textColor="#94a3b8"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+
+        <TextView
+            android:id="@+id/widget_target_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dec 19, 2026"
+            android:textColor="#7dd3fc"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Main Metric: Days Count & Label -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/widget_days_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="48"
+            android:textColor="#ffffff"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:includeFontPadding="false" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/widget_days_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DAYS"
+                android:textColor="#38bdf8"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"
+                android:includeFontPadding="false" />
+
+            <TextView
+                android:id="@+id/widget_status_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REMAINING"
+                android:textColor="#94a3b8"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04"
+                android:includeFontPadding="false" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Footer: Syllabus & Tap Hint -->
+    <TextView
+        android:id="@+id/widget_footer_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tap to open tracker"
+        android:textColor="#64748b"
+        android:textSize="10sp"
+        android:singleLine="true"
+        android:ellipsize="end" />
+
+</LinearLayout>

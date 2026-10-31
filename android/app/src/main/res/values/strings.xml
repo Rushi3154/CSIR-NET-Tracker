@@ -4,4 +4,6 @@
     <string name="title_activity_main">CSIR Tracker</string>
     <string name="package_name">com.csirtracker.app</string>
     <string name="custom_url_scheme">com.csirtracker.app</string>
+    <string name="widget_name">CSIR Countdown</string>
+    <string name="widget_description">Displays remaining days until the CSIR-NET Exam.</string>
 </resources>

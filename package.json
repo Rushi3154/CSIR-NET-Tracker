@@ -1,9 +1,11 @@
 {
   "name": "csir-tracker",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "CSIR-NET Chemistry Topic Tracker",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
+    "test": "node test/test-storage.js && node test/test-csv.js && node test/test-data-protection.js && node test/test-undo.js && node test/validate-html.js && node test/test-phase1.js",
     "dist": "electron-builder --win nsis",
     "android:sync": "node scripts/copy-web-assets.js && cap sync android",
     "android:open": "npm run android:sync && cap open android",
@@ -29,7 +31,16 @@
       "index.html",
       "main.js",
       "preload.js",
-      "package.json"
+      "package.json",
+      "data-protection.js",
+      "undo-system.js",
+      "study-sessions.js",
+      "study-planner.js",
+      "analytics.js",
+      "exam-readiness.js",
+      "focus-tools.js",
+      "android-file-bridge.js",
+      "src/**/*"
     ],
     "win": {
       "target": "nsis"
