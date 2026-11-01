@@ -854,6 +854,10 @@ button, input, select, textarea {
   background: var(--card-hover);
   box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.2), var(--glass-specular);
 }
+.topic.topic-list-target {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 .topic-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1204,24 +1208,42 @@ dialog::backdrop {
 }
 .topic-list li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 13px;
+  padding: 11px 14px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border-subtle);
 }
+.topic-list li[data-topic-id] {
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.topic-list li[data-topic-id]:hover,
+.topic-list li[data-topic-id]:focus-visible {
+  border-color: var(--border-hover);
+  outline: none;
+}
 .topic-list-name {
   min-width: 0;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: normal;
   overflow-wrap: anywhere;
 }
 .topic-list-meta {
   flex: 0 0 auto;
   color: var(--muted);
-  font-size: 11.5px;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: normal;
+}
+.lecture-target-count {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
 }
 .topic-list-empty {
   margin: 0;
@@ -1293,6 +1315,10 @@ dialog::backdrop {
     align-items: stretch;
     gap: 14px;
   }
+  .brand-section {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
   .header-countdowns {
     width: 100%;
   }
@@ -1348,8 +1374,37 @@ dialog::backdrop {
     flex-direction: column;
   }
   .header-countdown-tile {
+    flex: 0 0 auto;
     width: 100%;
     min-width: 0;
+    padding: 10px 12px;
+  }
+  .countdown-tile-header {
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+  .countdown-tile-date {
+    min-height: 36px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  .countdown-tile-value {
+    font-size: clamp(12px, 3.8vw, 14px);
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .topic-list li {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px 12px;
+  }
+  .topic-list-name {
+    font-size: 15px;
+  }
+  .topic-list-meta {
+    font-size: 12px;
   }
   .topic-form input,
   .topic-form select,
@@ -1573,6 +1628,7 @@ dialog::backdrop {
       <p style="margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.5;">
         Set your target completion date for all remaining lectures. Daily lecture pace will be calculated based on this date.
       </p>
+      <div id="lectureTargetLectureCount" class="lecture-target-count" aria-live="polite"></div>
       <label for="lectureTargetInput">Target completion date
         <input id="lectureTargetInput" name="lectureTargetDate" type="date" required>
       </label>
@@ -2300,7 +2356,7 @@ function render(){
         const lectures = s.lectures !== undefined && Number.isFinite(Number(s.lectures))
           ? Math.max(0, Math.floor(Number(s.lectures)))
           : 0;
-        return `<article class="topic ${s.status}">
+        return `<article class="topic ${s.status}" data-topic-id="${esc(t.id)}" tabindex="-1">
           <div class="topic-main">
             <div>
               <button class="name inline-edit-trigger" type="button" data-inline-edit="name" data-id="${esc(t.id)}" aria-label="Edit topic name: ${esc(t.name)}" title="Click to edit topic name">${esc(t.name)}</button>
@@ -2377,6 +2433,7 @@ const topicListFilters = {
   skip: { title: "Excluded Topics", filter: topic => get(topic).status === "skip" },
   lectures: {
     title: "Topics with Remaining Lectures",
+    showLectureCount: true,
     filter: topic => {
       const progress = get(topic);
       return progress.status !== "completed" && progress.status !== "skip" && Number(progress.lectures) > 0;
@@ -2430,6 +2487,28 @@ function closeTopicDialog() {
   animateTopicDialog(false);
 }
 
+function jumpToTopic(topicId) {
+  const topic = TOPICS.find(item => item.id === topicId);
+  if (!topic) return;
+
+  document.getElementById("search").value = "";
+  document.getElementById("statusFilter").value = "all";
+  document.getElementById("categoryFilter").value = "all";
+  sectionOpen[topic.cat] = true;
+  render();
+
+  const topicElement = [...document.querySelectorAll(".topic[data-topic-id]")]
+    .find(element => element.dataset.topicId === topicId);
+  if (!topicElement) return;
+  topicElement.scrollIntoView({
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    block: "center"
+  });
+  topicElement.focus({ preventScroll: true });
+  topicElement.classList.add("topic-list-target");
+  setTimeout(() => topicElement.classList.remove("topic-list-target"), 2000);
+}
+
 function openTopicList(filterName, sourceCard) {
   const config = topicListFilters[filterName];
   if (!config || topicDialog.open) return;
@@ -2441,7 +2520,10 @@ function openTopicList(filterName, sourceCard) {
   list.innerHTML = topics.length
     ? topics.map(topic => {
       const progress = get(topic);
-      return `<li><span class="topic-list-name">${esc(topic.name)}</span><span class="topic-list-meta">${fmt(topic.marks)} marks · ${categoryLabels[topic.cat]} · ${statusLabels[progress.status]}</span></li>`;
+      const lectureCount = config.showLectureCount
+        ? ` · ${progress.lectures} lecture${Number(progress.lectures) === 1 ? "" : "s"}`
+        : "";
+      return `<li data-topic-id="${esc(topic.id)}" role="button" tabindex="0" aria-label="Go to ${esc(topic.name)}"><span class="topic-list-name">${esc(topic.name)}</span><span class="topic-list-meta">${fmt(topic.marks)} marks${lectureCount} · ${categoryLabels[topic.cat]} · ${statusLabels[progress.status]}</span></li>`;
     }).join("")
     : '<li class="topic-list-empty">There are no topics in this list yet.</li>';
   topicDialogOrigin = sourceCard.getBoundingClientRect();
@@ -2449,6 +2531,22 @@ function openTopicList(filterName, sourceCard) {
   topicDialogClosing = false;
   animateTopicDialog(true);
 }
+
+const topicList = document.getElementById("remainingTopicsList");
+let pendingTopicId = null;
+topicList.addEventListener("click", event => {
+  const item = event.target.closest("li[data-topic-id]");
+  if (!item) return;
+  pendingTopicId = item.dataset.topicId;
+  closeTopicDialog();
+});
+topicList.addEventListener("keydown", event => {
+  const item = event.target.closest("li[data-topic-id]");
+  if (!item || (event.key !== "Enter" && event.key !== " ")) return;
+  event.preventDefault();
+  pendingTopicId = item.dataset.topicId;
+  closeTopicDialog();
+});
 
 document.querySelectorAll("[data-topic-list]").forEach(card => {
   const openList = () => openTopicList(card.dataset.topicList, card);
@@ -2471,6 +2569,11 @@ topicDialog.addEventListener("cancel", event => {
 topicDialog.addEventListener("close", () => {
   topicDialogClosing = false;
   topicDialogOrigin = null;
+  if (pendingTopicId) {
+    const topicId = pendingTopicId;
+    pendingTopicId = null;
+    jumpToTopic(topicId);
+  }
 });
 document.getElementById("closeRemainingTopics").addEventListener("click", closeTopicDialog);
 
@@ -2579,6 +2682,10 @@ function updateLectureStats() {
   });
   const remLectures = activeTopics.reduce((sum, t) => sum + (Math.max(0, parseInt(get(t).lectures, 10) || 0)), 0);
   remLecturesEl.textContent = remLectures;
+  const lectureTargetCountEl = document.getElementById("lectureTargetLectureCount");
+  if (lectureTargetCountEl) {
+    lectureTargetCountEl.textContent = `${remLectures} remaining lecture${remLectures === 1 ? "" : "s"} in total`;
+  }
 
   const effectiveTarget = lectureDeadline && validDeadline(lectureDeadline) ? lectureDeadline : deadline;
   const daysLeft = getDaysUntilTarget(effectiveTarget);
@@ -3375,8 +3482,7 @@ function formatDeadlineCountdown(dateValue) {
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-  return `⏳ ${days}d ${hours}h ${mins}m ${seconds}s left`;
+  return `⏳ ${days}d ${hours}h ${mins}m left`;
 }
 
 function updateCountdown() {
@@ -3387,7 +3493,7 @@ function updateCountdown() {
 }
 
 updateCountdown();
-setInterval(updateCountdown, 1000);
+setInterval(updateCountdown, 60000);
 
 // START
 loadData();

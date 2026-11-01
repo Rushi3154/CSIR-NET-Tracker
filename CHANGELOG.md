@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.2] - 2026-11-01
+
+### Improved
+- Restored countdown cards while keeping seconds hidden.
+- Made topic lists navigable to their matching topics and added remaining lecture counts.
+
+### Fixed
+- Incremented the Android version code so existing installations can be updated.
+
 ## [2.1.1] - 2026-11-01
 
 ### Fixed

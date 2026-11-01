@@ -1,6 +1,6 @@
 {
   "name": "csir-tracker",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "CSIR-NET Chemistry Topic Tracker",
   "main": "main.js",
   "scripts": {
