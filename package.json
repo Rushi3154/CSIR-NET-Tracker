@@ -17,9 +17,9 @@
     "@capacitor/core": "^8.0.0",
     "@capacitor/filesystem": "^8.0.0",
     "@capacitor/share": "^8.0.0",
-    "esbuild": "^0.25.0",
     "electron": "^44.6.0",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "esbuild": "^0.25.0"
   },
   "build": {
     "appId": "com.csirtracker.desktop",
@@ -53,5 +53,8 @@
       "createStartMenuShortcut": true,
       "artifactName": "CSIR-Tracker-Setup-${version}.${ext}"
     }
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.2"
   }
 }

@@ -302,7 +302,7 @@ ipcMain.handle('import-csv', async () => {
   return fs.readFileSync(result.filePaths[0], 'utf-8');
 });
 
-ipcMain.handle('export-json', async (event, jsonStr) => {
+ipcMain.handle('export-json', async (event, jsonStr, fileName) => {
   if (typeof jsonStr !== 'string') {
     throw new TypeError('JSON export data must be a string.');
   }
@@ -310,7 +310,7 @@ ipcMain.handle('export-json', async (event, jsonStr) => {
   const dateStr = new Date().toISOString().slice(0, 10);
   const result = await dialog.showSaveDialog({
     title: 'Export Tracker Backup',
-    defaultPath: path.join(app.getPath('documents'), `csir_tracker_backup_${dateStr}.json`),
+    defaultPath: path.join(app.getPath('documents'), fileName || `csir_tracker_backup_${dateStr}.json`),
     filters: [
       { name: 'JSON Backup Files', extensions: ['json'] },
       { name: 'All Files', extensions: ['*'] }
@@ -334,19 +334,4 @@ ipcMain.handle('import-json', async () => {
   if (result.canceled || result.filePaths.length === 0) return null;
 
   return fs.readFileSync(result.filePaths[0], 'utf-8');
-});
-
-ipcMain.handle('export-json', async (event, jsonData, fileName) => {
-  if (typeof jsonData !== 'string') {
-    throw new TypeError('JSON export data must be a string.');
-  }
-
-  const result = await dialog.showSaveDialog({
-    defaultPath: path.join(app.getPath('documents'), fileName || 'csir-tracker-backup.json'),
-    filters: [{ name: 'JSON Files', extensions: ['json'] }]
-  });
-  if (result.canceled) return false;
-
-  fs.writeFileSync(result.filePath, jsonData, 'utf-8');
-  return true;
 });
