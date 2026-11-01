@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2026-11-01
+
+### Fixed
+- Incremented the Android version code so existing installations can be updated.
+- Kept the application ID and signing identity compatible with existing APK installs.
+
 ## [2.1.0] - 2026-10-30
 
 ### Added
