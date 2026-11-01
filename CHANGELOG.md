@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2026-11-01
+
+### Improved
+- Restored the v2.1 light and dark themes and floating theme switcher.
+- Prevented touch interactions from leaving hover and focus highlights on cards.
+- Removed the decorative icon from the CSV export button.
+
 ## [2.2.0] - 2026-11-01
 
 ### Improved
