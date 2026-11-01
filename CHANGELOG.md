@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2026-11-01
+
+### Improved
+- Refreshed the study dashboard with a clearer, responsive design and refined light and dark themes.
+- Prevented page scrolling behind open dialogs.
+- Android Back now closes open dialogs first and requires a second press to exit.
+
+### Fixed
+- Prevented a duplicate Electron `export-json` handler from stopping the desktop app at startup.
+- Kept JSON backup exports aligned with the filename selected by the app.
+
 ## [2.1.2] - 2026-11-01
 
 ### Improved
